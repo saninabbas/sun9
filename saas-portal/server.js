@@ -55,17 +55,16 @@ async function authenticateUser(req) {
   }
 
   // 2. Check JWT Bearer token or cookie
-  const authHeader = req.headers['authorization'];
   const token = auth.extractTokenFromRequest(req);
-  if (authHeader || token) {
-    if (!token) return null;
+  if (token) {
     const decoded = auth.verifyToken(token);
-    if (!decoded || !decoded.userId) return null;
-    return await db.findUserById(decoded.userId);
+    if (decoded && decoded.userId) {
+      return await db.findUserById(decoded.userId);
+    }
   }
 
-  // 3. Dev mode fallback user when no auth header is provided
-  return await db.findUserByEmail('alex@company.com');
+  // 3. Unauthenticated if no valid token or key is supplied
+  return null;
 }
 
 const server = http.createServer(async (req, res) => {

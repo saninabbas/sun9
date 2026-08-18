@@ -61,6 +61,23 @@ async function runTests() {
   }
 
   // ----------------------------------------------------
+  // AUTH SETUP: Authenticate User A for Workflow Tests
+  // ----------------------------------------------------
+  let tokenA = null;
+  try {
+    const loginA = await req('/api/auth/login', 'POST', {
+      email: 'alex@company.com',
+      password: 'password123'
+    });
+    tokenA = loginA.data.token;
+    assert(tokenA, 'Failed to obtain token for User A');
+  } catch (e) {
+    console.error('Setup Auth Error:', e.message);
+  }
+
+  const authHeadersA = { 'Authorization': `Bearer ${tokenA}` };
+
+  // ----------------------------------------------------
   // TEST 2: Translator — Unsupported Node Type
   // ----------------------------------------------------
   try {
@@ -69,7 +86,7 @@ async function runTests() {
       definition: {
         nodes: [{ id: 'n1', type: 'bitcoin_miner_daemon', name: 'Illegal Mining' }]
       }
-    });
+    }, authHeadersA);
     assert.strictEqual(badNodeRes.status, 400, 'Expected status 400 for unsupported node');
     assert.strictEqual(badNodeRes.data.code, 'UNSUPPORTED_NODE', 'Expected error code UNSUPPORTED_NODE');
     logPass('2. Translation Layer — Correctly rejected unsupported node type (UNSUPPORTED_NODE)');
@@ -92,7 +109,7 @@ async function runTests() {
           { id: 'n4', type: 'database', name: 'Postgres Leads Table', parameters: { query: 'SELECT 1;' } }
         ]
       }
-    });
+    }, authHeadersA);
     assert.strictEqual(validWfRes.status, 201, 'Expected status 201 for valid workflow creation');
     assert(validWfRes.data.workflow.id, 'Workflow ID is missing');
     createdWfId = validWfRes.data.workflow.id;
@@ -107,9 +124,7 @@ async function runTests() {
   try {
     const execRes = await req(`/api/workflows/${createdWfId}/execute`, 'POST', {
       payload: { leadId: 'lead_992', score: 98 }
-    });
-    // In production without live n8n instance, returns 503 N8N_CONNECTION_FAILED.
-    // In dev simulation mode, returns 200 with mode: simulated_dev.
+    }, authHeadersA);
     assert(execRes.status === 200 || execRes.status === 503, `Unexpected status code ${execRes.status}`);
     if (execRes.status === 503) {
       assert.strictEqual(execRes.data.code, 'N8N_CONNECTION_FAILED', 'Expected N8N_CONNECTION_FAILED code');
@@ -157,7 +172,6 @@ async function runTests() {
     const unauthRes = await req('/api/workflows', 'POST', { name: 'Hack' }, {
       'Authorization': 'Bearer invalid_token_abc'
     });
-    // Handled with 401 or fallback
     assert(unauthRes.status === 401 || unauthRes.status === 400 || unauthRes.data.success === false, 'Unauthenticated check failed');
     logPass('6. Authentication & API Key System — Verified protected routes');
   } catch (e) {

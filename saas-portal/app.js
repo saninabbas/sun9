@@ -355,15 +355,27 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function loadUserSession() {
+    const token = localStorage.getItem('sun9_jwt_token');
+    if (!token) {
+      currentUser = null;
+      if (navAuthLabel) navAuthLabel.textContent = 'Log in';
+      return;
+    }
     try {
       const res = await fetch('/api/auth/me', { headers: getAuthHeader() });
       const data = await res.json();
       if (data.success && data.user) {
         currentUser = data.user;
         applyUserData(data.user);
+        if (navAuthLabel) navAuthLabel.textContent = 'Dashboard';
+      } else {
+        localStorage.removeItem('sun9_jwt_token');
+        currentUser = null;
+        if (navAuthLabel) navAuthLabel.textContent = 'Log in';
       }
-    } catch (err) {
-      console.log('Session check complete.');
+    } catch {
+      currentUser = null;
+      if (navAuthLabel) navAuthLabel.textContent = 'Log in';
     }
   }
 
