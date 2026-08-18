@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  # Traefik Reverse Proxy with Automatic SSL (Let's Encrypt)
+  traefik:
+    image: traefik:v3.0
+    restart: unless-stopped
+    command:
+      - "--api.insecure=false"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=${SSL_EMAIL:-admin@sun9.com}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
+    networks:
+      - sun9-network
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_POSTGRESDB_DATABASE:-sun9_db}
+      POSTGRES_USER: ${DB_POSTGRESDB_USER:-sun9_admin}
+      POSTGRES_PASSWORD: ${DB_POSTGRESDB_PASSWORD:-sun9_secure_password_123}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - sun9-network
+
+  # Redis for High-Throughput Queue Mode
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - sun9-network
+
+  # sun9 Automation Engine (Primary Webhook & Editor Server)
+  sun9-engine:
+    image: n8nio/n8n:latest
+    restart: unless-stopped
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_DATABASE=${DB_POSTGRESDB_DATABASE:-sun9_db}
+      - DB_POSTGRESDB_USER=${DB_POSTGRESDB_USER:-sun9_admin}
+      - DB_POSTGRESDB_PASSWORD=${DB_POSTGRESDB_PASSWORD:-sun9_secure_password_123}
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_REDIS_HOST=redis
+      - WEBHOOK_URL=https://${SUN9_DOMAIN:-app.sun9.com}/
+      - N8N_EDITOR_BASE_URL=https://${SUN9_DOMAIN:-app.sun9.com}/
+      - N8N_ENCRYPTION_KEY=${SUN9_ENCRYPTION_KEY:-generate_your_32char_key}
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_VERSION_NOTIFICATIONS_ENABLED=false
+      - N8N_HIRING_BANNER_ENABLED=false
+      - N8N_TEMPLATES_ENABLED=true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sun9.rule=Host(`${SUN9_DOMAIN:-app.sun9.com}`)"
+      - "traefik.http.routers.sun9.entrypoints=websecure"
+      - "traefik.http.routers.sun9.tls.certresolver=myresolver"
+    networks:
+      - sun9-network
+    depends_on:
+      - postgres
+      - redis
+
+  # sun9 SaaS Portal & Stripe Billing Gateway
+  saas-portal:
+    build:
+      context: ./saas-portal
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portal.rule=Host(`${PORTAL_DOMAIN:-sun9.com}`)"
+      - "traefik.http.routers.portal.entrypoints=websecure"
+      - "traefik.http.routers.portal.tls.certresolver=myresolver"
+    networks:
+      - sun9-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  sun9-network:
+    driver: bridge

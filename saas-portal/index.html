@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sun9 — AI Workflow Automation Platform</title>
+  <meta name="description" content="Build, run, and monitor powerful AI workflows from one visual workspace. Connect 500+ systems with the flexibility of code and the speed of visual building." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-theme="dark">
+
+  <!-- ========================================================================= -->
+  <!-- 1. COMPACT NAVBAR                                                         -->
+  <!-- ========================================================================= -->
+  <div class="nav-wrapper">
+    <header class="navbar">
+      <div class="nav-left">
+        <a href="#" class="brand-link" id="nav-brand-logo">
+          <svg class="sun9-glyph" width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="3.5" fill="currentColor"/>
+            <circle cx="12" cy="3.5" r="1.5" fill="currentColor"/>
+            <circle cx="12" cy="20.5" r="1.5" fill="currentColor"/>
+            <circle cx="3.5" cy="12" r="1.5" fill="currentColor"/>
+            <circle cx="20.5" cy="12" r="1.5" fill="currentColor"/>
+            <circle cx="6" cy="6" r="1.2" fill="currentColor" opacity="0.8"/>
+            <circle cx="18" cy="6" r="1.2" fill="currentColor" opacity="0.8"/>
+            <circle cx="6" cy="18" r="1.2" fill="currentColor" opacity="0.8"/>
+            <circle cx="18" cy="18" r="1.2" fill="currentColor" opacity="0.8"/>
+          </svg>
+          <span class="brand-text">sun9</span>
+        </a>
+
+        <nav class="nav-links">
+          <a href="#product" class="nav-item">Product</a>
+          <a href="#solutions" class="nav-item">Solutions</a>
+          <a href="#integrations" class="nav-item">Integrations</a>
+          <a href="#ai-workflows" class="nav-item">AI</a>
+          <a href="#pricing" class="nav-item">Pricing</a>
+        </nav>
+      </div>
+
+      <div class="nav-right">
+        <button class="btn btn-ghost btn-sm" id="btn-open-auth-login">
+          <span id="nav-auth-label">Log in</span>
+        </button>
+        <button class="btn btn-primary btn-sm" id="btn-nav-start">Get started</button>
+      </div>
+    </header>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 2. MAIN APPLICATION CONTAINER                                             -->
+  <!-- ========================================================================= -->
+  <main id="app-root">
+
+    <!-- --------------------------------------------------------------------- -->
+    <!-- VIEW A: PUBLIC LANDING PAGE                                           -->
+    <!-- --------------------------------------------------------------------- -->
+    <div id="view-landing" class="view-landing">
+
+      <!-- SECTION 1: HERO -->
+      <section class="section-hero">
+        <div class="container hero-content">
+          <div class="hero-tag">
+            <span class="hero-tag-dot"></span>
+            <span>Next-Gen Workflow Automation Engine</span>
+          </div>
+
+          <h1 class="hero-heading">
+            Automate your work.<br />
+            <span class="text-secondary">Build without limits.</span>
+          </h1>
+
+          <p class="hero-subtext">
+            Build, run, and monitor powerful AI workflows from one visual workspace with sub-millisecond execution.
+          </p>
+
+          <div class="hero-cta-row">
+            <button class="btn btn-primary btn-lg" id="btn-hero-build">
+              <span>Start building for free</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </button>
+            <button class="btn btn-secondary btn-lg" id="btn-hero-demo">See how it works</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: HERO PRODUCT / WORKFLOW VISUAL -->
+      <section class="section-product-canvas" id="product">
+        <div class="container">
+          <div class="canvas-window">
+            <div class="canvas-window-header font-mono">
+              <div class="header-left">
+                <span class="status-indicator ready" id="hero-status-dot"></span>
+                <span>production / ai-lead-intelligence-agent.flow</span>
+              </div>
+              <div class="header-right">
+                <span class="badge-env">PROD CLUSTER</span>
+                <button class="btn btn-primary btn-xs" id="btn-run-hero-flow">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  <span>Run Workflow</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="canvas-graph-body">
+              <svg class="graph-svg-wires" viewBox="0 0 760 360" fill="none">
+                <path id="wire-1" class="wire-path" d="M 170 80 C 230 80, 230 170, 290 170" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+                <path id="wire-2" class="wire-path" d="M 470 170 C 520 170, 520 90, 570 90" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+                <path id="wire-3" class="wire-path" d="M 470 170 C 520 170, 520 250, 570 250" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+              </svg>
+
+              <!-- Node 1: Webhook Trigger -->
+              <div class="graph-node" id="hnode-1" style="top: 40px; left: 20px;">
+                <div class="node-port port-right"></div>
+                <div class="node-top">
+                  <span class="node-icon-box">⚡</span>
+                  <span class="node-tag font-mono">TRIGGER</span>
+                </div>
+                <div class="node-name">Webhook Intake</div>
+                <div class="node-sub font-mono">POST /v1/incoming-leads</div>
+                <div class="node-status font-mono" id="hstatus-1">✓ 200 OK</div>
+              </div>
+
+              <!-- Node 2: AI Reasoning Agent -->
+              <div class="graph-node graph-node-ai" id="hnode-2" style="top: 120px; left: 290px;">
+                <div class="node-port port-left"></div>
+                <div class="node-port port-right"></div>
+                <div class="node-top">
+                  <span class="node-icon-box">🧠</span>
+                  <span class="node-tag font-mono">AI AGENT</span>
+                </div>
+                <div class="node-name">Claude 3.5 Sonnet</div>
+                <div class="node-sub font-mono">Score Intent &amp; Enrich</div>
+                <div class="node-status font-mono" id="hstatus-2">✓ score: 94</div>
+              </div>
+
+              <!-- Node 3: PostgreSQL Database -->
+              <div class="graph-node" id="hnode-3" style="top: 50px; left: 570px;">
+                <div class="node-port port-left"></div>
+                <div class="node-top">
+                  <span class="node-icon-box">🗄️</span>
+                  <span class="node-tag font-mono">DATABASE</span>
+                </div>
+                <div class="node-name">PostgreSQL Upsert</div>
+                <div class="node-sub font-mono">table.leads.upsert()</div>
+                <div class="node-status font-mono" id="hstatus-3">✓ row_saved</div>
+              </div>
+
+              <!-- Node 4: Slack Dispatch -->
+              <div class="graph-node" id="hnode-4" style="top: 210px; left: 570px;">
+                <div class="node-port port-left"></div>
+                <div class="node-top">
+                  <span class="node-icon-box">🔔</span>
+                  <span class="node-tag font-mono">DISPATCH</span>
+                </div>
+                <div class="node-name">Slack VIP Alert</div>
+                <div class="node-sub font-mono">#vip-deals-stream</div>
+                <div class="node-status font-mono" id="hstatus-4">✓ sent</div>
+              </div>
+            </div>
+
+            <div class="canvas-window-footer font-mono">
+              <div class="footer-log-left">
+                <span class="log-bullet"></span>
+                <span id="hero-log-entry">Workflow ready. Click 'Run Workflow' to test execution...</span>
+              </div>
+              <div class="footer-log-ms" id="hero-log-latency">0ms</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: TRUST & ECOSYSTEM BAR -->
+      <section class="section-trust">
+        <div class="container">
+          <div class="trust-panel">
+            <p class="trust-heading">Built for teams that automate everything</p>
+            <div class="trust-tags-row font-mono">
+              <span class="t-pill">AI Models</span>
+              <span class="t-pill">REST APIs</span>
+              <span class="t-pill">Databases</span>
+              <span class="t-pill">Cloud SaaS</span>
+              <span class="t-pill">Webhooks</span>
+              <span class="t-pill">Internal Tools</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: WHAT SUN9 DOES -->
+      <section class="section-core-product" id="solutions">
+        <div class="container">
+          <div class="section-header-block">
+            <span class="section-badge-label font-mono">CORE CAPABILITY</span>
+            <h2 class="section-main-title">Build workflows that actually get things done</h2>
+            <p class="section-main-desc">Connect APIs, automate complex logic, and deploy AI reasoning in minutes without losing code-level control.</p>
+          </div>
+
+          <div class="core-grid-3col">
+            <div class="core-card">
+              <div class="core-card-num font-mono">01</div>
+              <h3 class="core-card-title">Visual Logic with Raw Power</h3>
+              <p class="core-card-desc">Design full multi-step execution graphs visually. Switch directly into JavaScript or Python at any step when standard connectors aren't enough.</p>
+            </div>
+
+            <div class="core-card">
+              <div class="core-card-num font-mono">02</div>
+              <h3 class="core-card-title">Sub-Millisecond Engine</h3>
+              <p class="core-card-desc">Engineered on a lightweight event-driven runtime with native Redis worker pools to process millions of webhook events with zero queuing latency.</p>
+            </div>
+
+            <div class="core-card">
+              <div class="core-card-num font-mono">03</div>
+              <h3 class="core-card-title">Deterministic Observability</h3>
+              <p class="core-card-desc">Inspect exact step inputs and outputs in real time. Replay past executions with recorded payload snapshots to debug in seconds.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 5: AI WORKFLOWS SECTION -->
+      <section class="section-ai-workflows" id="ai-workflows">
+        <div class="container">
+          <div class="section-header-block center">
+            <span class="section-badge-label font-mono">AI WORKFLOW ORCHESTRATION</span>
+            <h2 class="section-main-title">Build AI workflows you can actually control</h2>
+            <p class="section-desc-center">AI is part of the execution graph, not an isolated chatbot. Integrate LLMs with real databases, tools, and structured actions.</p>
+          </div>
+
+          <div class="ai-architecture-display font-mono">
+            <div class="ai-flow-step">
+              <div class="ai-step-title">INPUT</div>
+              <div class="ai-step-box">Webhook / API Trigger</div>
+            </div>
+            <div class="ai-flow-arrow">→</div>
+            <div class="ai-flow-step">
+              <div class="ai-step-title">AI REASONING</div>
+              <div class="ai-step-box ai-step-highlight">Autonomous Agent (Claude / GPT-4o)</div>
+            </div>
+            <div class="ai-flow-arrow">→</div>
+            <div class="ai-flow-step">
+              <div class="ai-step-title">TOOLS &amp; DATA</div>
+              <div class="ai-step-box">Vector DB • REST APIs • Postgres • Custom Code</div>
+            </div>
+            <div class="ai-flow-arrow">→</div>
+            <div class="ai-flow-step">
+              <div class="ai-step-title">VERIFIED ACTION</div>
+              <div class="ai-step-box">Database Upsert • Slack • Email Notification</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 6: INTEGRATIONS (500+ APPS) -->
+      <section class="section-integrations-showcase" id="integrations">
+        <div class="container">
+          <div class="section-header-block center">
+            <span class="section-badge-label font-mono">INTEGRATIONS</span>
+            <h2 class="section-main-title">Connect everything. Automate anything.</h2>
+            <p class="section-desc-center">Pre-built connectors for all your databases, AI providers, and cloud applications. Connect to any REST endpoint with custom authentication.</p>
+          </div>
+
+          <div class="marquee-wrapper">
+            <div class="marquee-row">
+              <span class="int-tag"><span class="int-dot"></span>OpenAI</span>
+              <span class="int-tag"><span class="int-dot"></span>Anthropic</span>
+              <span class="int-tag"><span class="int-dot"></span>PostgreSQL</span>
+              <span class="int-tag"><span class="int-dot"></span>Stripe</span>
+              <span class="int-tag"><span class="int-dot"></span>GitHub</span>
+              <span class="int-tag"><span class="int-dot"></span>Supabase</span>
+              <span class="int-tag"><span class="int-dot"></span>Slack</span>
+              <span class="int-tag"><span class="int-dot"></span>Notion</span>
+              <span class="int-tag"><span class="int-dot"></span>Redis</span>
+              <span class="int-tag"><span class="int-dot"></span>Pinecone</span>
+              <span class="int-tag"><span class="int-dot"></span>Discord</span>
+              <span class="int-tag"><span class="int-dot"></span>AWS S3</span>
+              <span class="int-tag"><span class="int-dot"></span>HubSpot</span>
+              <span class="int-tag"><span class="int-dot"></span>OpenAI</span>
+              <span class="int-tag"><span class="int-dot"></span>Anthropic</span>
+              <span class="int-tag"><span class="int-dot"></span>PostgreSQL</span>
+              <span class="int-tag"><span class="int-dot"></span>Stripe</span>
+              <span class="int-tag"><span class="int-dot"></span>GitHub</span>
+              <span class="int-tag"><span class="int-dot"></span>Supabase</span>
+              <span class="int-tag"><span class="int-dot"></span>Slack</span>
+            </div>
+          </div>
+
+          <div class="marquee-wrapper reverse">
+            <div class="marquee-row">
+              <span class="int-tag"><span class="int-dot"></span>Docker</span>
+              <span class="int-tag"><span class="int-dot"></span>Kubernetes</span>
+              <span class="int-tag"><span class="int-dot"></span>Airtable</span>
+              <span class="int-tag"><span class="int-dot"></span>Salesforce</span>
+              <span class="int-tag"><span class="int-dot"></span>Linear</span>
+              <span class="int-tag"><span class="int-dot"></span>Jira</span>
+              <span class="int-tag"><span class="int-dot"></span>Resend</span>
+              <span class="int-tag"><span class="int-dot"></span>SendGrid</span>
+              <span class="int-tag"><span class="int-dot"></span>MongoDB</span>
+              <span class="int-tag"><span class="int-dot"></span>Twilio</span>
+              <span class="int-tag"><span class="int-dot"></span>Qdrant</span>
+              <span class="int-tag"><span class="int-dot"></span>Docker</span>
+              <span class="int-tag"><span class="int-dot"></span>Kubernetes</span>
+              <span class="int-tag"><span class="int-dot"></span>Airtable</span>
+              <span class="int-tag"><span class="int-dot"></span>Salesforce</span>
+              <span class="int-tag"><span class="int-dot"></span>Linear</span>
+              <span class="int-tag"><span class="int-dot"></span>Jira</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 7: VISUAL BUILDER SECTION -->
+      <section class="section-visual-builder">
+        <div class="container">
+          <div class="section-header-block">
+            <span class="section-badge-label font-mono">WORKFLOW STUDIO</span>
+            <h2 class="section-main-title">A complete visual studio for workflow engineers</h2>
+            <p class="section-main-desc">Palette on the left, interactive canvas in the center, and granular parameter controls on the right.</p>
+          </div>
+
+          <div class="studio-mockup-frame">
+            <div class="studio-frame-top font-mono">
+              <div class="frame-dot"></div>
+              <span>customer-onboarding-v2.flow • 4 Active Nodes</span>
+            </div>
+
+            <div class="studio-3col-layout">
+              <div class="studio-col-lib font-mono">
+                <div class="col-head">NODE LIBRARY</div>
+                <div class="lib-entry">⚡ Webhook Intake</div>
+                <div class="lib-entry">🧠 AI Agent (LLM)</div>
+                <div class="lib-entry">🔀 Branch Condition</div>
+                <div class="lib-entry">🗄️ PostgreSQL Query</div>
+                <div class="lib-entry">🔔 Slack Dispatch</div>
+              </div>
+
+              <div class="studio-col-canvas font-mono">
+                <div class="canvas-node-pill">1. Webhook Intake (200 OK)</div>
+                <div class="canvas-arrow-down">↓</div>
+                <div class="canvas-node-pill active">2. Claude 3.5 Sonnet (Score Intent)</div>
+                <div class="canvas-arrow-down">↓</div>
+                <div class="canvas-split-branches">
+                  <div class="branch-pill">YES → Postgres Upsert</div>
+                  <div class="branch-pill">NO → Log to S3</div>
+                </div>
+              </div>
+
+              <div class="studio-col-inspector font-mono">
+                <div class="col-head">NODE INSPECTOR</div>
+                <div class="inspector-item">
+                  <span class="k">Model:</span>
+                  <span class="v">claude-3-5-sonnet</span>
+                </div>
+                <div class="inspector-item">
+                  <span class="k">Temperature:</span>
+                  <span class="v">0.20</span>
+                </div>
+                <div class="inspector-item">
+                  <span class="k">Timeout:</span>
+                  <span class="v">30,000ms</span>
+                </div>
+                <div class="inspector-item">
+                  <span class="k">Retry Policy:</span>
+                  <span class="v">3 retries on 5xx</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 8: CODE + VISUAL FLEXIBILITY -->
+      <section class="section-code-flexibility">
+        <div class="container">
+          <div class="code-split-card">
+            <div class="code-split-text">
+              <span class="section-badge-label font-mono">NO LIMITS</span>
+              <h2 class="section-main-title">Visual when you want.<br />Code when you need.</h2>
+              <p class="section-main-desc">Standard connectors handle 90% of your stack. For everything else, write native JavaScript or Python directly inside the node with full npm and pip package support.</p>
+              <ul class="flexibility-checklist">
+                <li><span class="chk">✓</span> Zero restrictions on data transformation logic</li>
+                <li><span class="chk">✓</span> Direct JSON payload inspection on every step</li>
+                <li><span class="chk">✓</span> Import external modules and custom SDKs</li>
+              </ul>
+            </div>
+
+            <div class="code-split-ide font-mono">
+              <div class="ide-window-header">
+                <span>transform_payload.js</span>
+                <span class="text-success">Node 24 Active</span>
+              </div>
+              <pre class="ide-code-content">// Transform incoming records with custom logic
+export default async function(items) {
+  return items.map(item => ({
+    lead_id: item.json.id,
+    lead_score: item.json.score * 1.25,
+    is_vip: item.json.score >= 80,
+    timestamp: new Date().toISOString()
+  }));
+}</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 9: EXECUTION & DEBUGGING -->
+      <section class="section-execution-debug">
+        <div class="container">
+          <div class="section-header-block center">
+            <span class="section-badge-label font-mono">OBSERVABILITY</span>
+            <h2 class="section-main-title">Run. Inspect. Improve.</h2>
+            <p class="section-desc-center">Real-time execution traces, historical audit logs, and replay capabilities make debugging straightforward.</p>
+          </div>
+
+          <div class="execution-tracker-card font-mono">
+            <div class="tracker-header">
+              <div class="tracker-id">Execution #8421</div>
+              <div class="tracker-status text-success">✓ Status: Successful (Duration: 184ms)</div>
+            </div>
+
+            <div class="tracker-steps-table">
+              <div class="step-row">
+                <span class="step-col-name">1. Webhook Intake</span>
+                <span class="step-col-status text-success">✓ 200 OK</span>
+                <span class="step-col-time">28ms</span>
+              </div>
+              <div class="step-row">
+                <span class="step-col-name">2. AI Intent Scorer</span>
+                <span class="step-col-status text-success">✓ score: 94</span>
+                <span class="step-col-time">82ms</span>
+              </div>
+              <div class="step-row">
+                <span class="step-col-name">3. Branch Evaluator</span>
+                <span class="step-col-status text-success">✓ true (>= 80)</span>
+                <span class="step-col-time">14ms</span>
+              </div>
+              <div class="step-row">
+                <span class="step-col-name">4. Database Upsert</span>
+                <span class="step-col-status text-success">✓ record_saved</span>
+                <span class="step-col-time">36ms</span>
+              </div>
+              <div class="step-row">
+                <span class="step-col-name">5. Slack VIP Alert</span>
+                <span class="step-col-status text-success">✓ dispatched</span>
+                <span class="step-col-time">24ms</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 10: USE CASES -->
+      <section class="section-use-cases-grid">
+        <div class="container">
+          <div class="section-header-block">
+            <span class="section-badge-label font-mono">SOLUTIONS</span>
+            <h2 class="section-main-title">Engineered for your entire workflow architecture</h2>
+          </div>
+
+          <div class="use-cases-6grid">
+            <div class="uc-box">
+              <h4 class="uc-title font-mono">AI OPERATIONS</h4>
+              <p class="uc-desc">Automate multi-step reasoning, document summarization, and vector data embeddings.</p>
+            </div>
+            <div class="uc-box">
+              <h4 class="uc-title font-mono">DATA PIPELINES</h4>
+              <p class="uc-desc">Move, clean, and synchronize records across databases, data warehouses, and CRMs.</p>
+            </div>
+            <div class="uc-box">
+              <h4 class="uc-title font-mono">SALES &amp; GROWTH</h4>
+              <p class="uc-desc">Score incoming leads, route prospects to account executives, and sync deal updates.</p>
+            </div>
+            <div class="uc-box">
+              <h4 class="uc-title font-mono">DEVOPS &amp; SRE</h4>
+              <p class="uc-desc">Trigger automated incident remediation, restart worker pods, and dispatch alert summaries.</p>
+            </div>
+            <div class="uc-box">
+              <h4 class="uc-title font-mono">SECURITY &amp; COMPLIANCE</h4>
+              <p class="uc-desc">Triage SIEM alerts, correlate threat intelligence, and auto-quarantine compromised credentials.</p>
+            </div>
+            <div class="uc-box">
+              <h4 class="uc-title font-mono">INTERNAL TOOLS</h4>
+              <p class="uc-desc">Build reliable backends for internal dashboards and customer support automation portals.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 11: SECURITY & SCALE -->
+      <section class="section-security-scale">
+        <div class="container">
+          <div class="security-card">
+            <div class="security-text">
+              <span class="section-badge-label font-mono">ENTERPRISE INFRASTRUCTURE</span>
+              <h2 class="section-main-title">Built to run in production</h2>
+              <p class="section-main-desc">Deploy in your private VPC or choose our fully isolated multi-tenant cloud with high availability guarantees.</p>
+              
+              <div class="security-features-row">
+                <div class="sf-item">
+                  <h4 class="sf-head">Secure Credentials</h4>
+                  <p class="sf-p">AES-256 encrypted credential vaults with auto secret rotation.</p>
+                </div>
+                <div class="sf-item">
+                  <h4 class="sf-head">Granular RBAC</h4>
+                  <p class="sf-p">Role-based access control with SSO SAML and audit logging.</p>
+                </div>
+                <div class="sf-item">
+                  <h4 class="sf-head">Queue Scaling</h4>
+                  <p class="sf-p">Redis worker clusters to process millions of concurrent jobs.</p>
+                </div>
+              </div>
+
+              <div class="compliance-row font-mono">
+                <span class="c-tag">SOC 2 Type II</span>
+                <span class="c-tag">GDPR Compliant</span>
+                <span class="c-tag">ISO 27001</span>
+                <span class="c-tag">TLS 1.3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 12: PRICING SECTION & STRIPE -->
+      <section class="section-pricing" id="pricing">
+        <div class="container">
+          <div class="section-header-block center">
+            <span class="section-badge-label font-mono">PRICING</span>
+            <h2 class="section-main-title">Scale from prototype to enterprise</h2>
+            <p class="section-desc-center">Predictable capacity-based pricing. Upgrade or cancel anytime.</p>
+
+            <div class="billing-switcher-wrap">
+              <span class="switch-lbl active" id="lbl-monthly">Monthly</span>
+              <button class="switch-toggle" id="btn-billing-switch" aria-label="Toggle annual discount"></button>
+              <span class="switch-lbl" id="lbl-annual">Annual <span class="discount-tag font-mono">Save 20%</span></span>
+            </div>
+          </div>
+
+          <div class="pricing-cards-grid">
+            <!-- Free Plan -->
+            <div class="price-tier-card" data-tier="free">
+              <div class="tier-top">
+                <h3 class="tier-heading">Community / Free</h3>
+                <p class="tier-subheading">For developers and local self-hosting.</p>
+                <div class="tier-cost">
+                  <span class="price-val font-mono">$0</span>
+                  <span class="price-cycle">/month</span>
+                </div>
+              </div>
+              <ul class="tier-bullet-list">
+                <li><span class="chk">✓</span> 1,000 executions / month</li>
+                <li><span class="chk">✓</span> 10 active workflows</li>
+                <li><span class="chk">✓</span> 500+ pre-built connectors</li>
+                <li><span class="chk">✓</span> 7-day log retention</li>
+              </ul>
+              <button class="btn btn-secondary btn-full btn-select-tier" data-plan="free">Start Free</button>
+            </div>
+
+            <!-- Pro Plan -->
+            <div class="price-tier-card featured" data-tier="pro">
+              <div class="featured-badge font-mono">MOST POPULAR</div>
+              <div class="tier-top">
+                <h3 class="tier-heading">Pro Cloud</h3>
+                <p class="tier-subheading">For production workflows and AI agents.</p>
+                <div class="tier-cost">
+                  <span class="price-val font-mono" id="price-pro">$29</span>
+                  <span class="price-cycle">/month</span>
+                </div>
+              </div>
+              <ul class="tier-bullet-list">
+                <li><span class="chk">✓</span> 25,000 executions / month</li>
+                <li><span class="chk">✓</span> 50 active workflows</li>
+                <li><span class="chk">✓</span> Native AI &amp; LLM agents</li>
+                <li><span class="chk">✓</span> Redis Queue high throughput</li>
+                <li><span class="chk">✓</span> 30-day log history</li>
+                <li><span class="chk">✓</span> Priority 24/7 support</li>
+              </ul>
+              <button class="btn btn-primary btn-full btn-select-tier" data-plan="pro">Subscribe with Polar</button>
+            </div>
+
+            <!-- Scale Plan -->
+            <div class="price-tier-card" data-tier="scale">
+              <div class="tier-top">
+                <h3 class="tier-heading">Enterprise / Scale</h3>
+                <p class="tier-subheading">For dedicated clusters and high volume.</p>
+                <div class="tier-cost">
+                  <span class="price-val font-mono" id="price-scale">$199</span>
+                  <span class="price-cycle">/month</span>
+                </div>
+              </div>
+              <ul class="tier-bullet-list">
+                <li><span class="chk">✓</span> 100,000+ executions / month</li>
+                <li><span class="chk">✓</span> 250 active workflows</li>
+                <li><span class="chk">✓</span> Dedicated container isolation</li>
+                <li><span class="chk">✓</span> SSO / SAML &amp; Granular RBAC</li>
+                <li><span class="chk">✓</span> Custom SLAs &amp; dedicated VPC</li>
+              </ul>
+              <button class="btn btn-secondary btn-full btn-select-tier" data-plan="scale">Get Scale</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 13: FINAL CTA -->
+      <section class="section-final-cta">
+        <div class="container">
+          <div class="final-cta-card">
+            <h2 class="final-cta-title">Your workflows are waiting.<br />Build your first automation with sun9.</h2>
+            <div class="final-cta-actions">
+              <button class="btn btn-primary btn-lg" id="btn-bottom-start">Start building for free →</button>
+              <button class="btn btn-secondary btn-lg" id="btn-bottom-sales">Explore documentation</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 14: PROFESSIONAL FOOTER -->
+      <footer class="footer-root">
+        <div class="container footer-5col-grid">
+          <div class="footer-brand-col">
+            <div class="brand-link">
+              <svg class="sun9-glyph" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="3.5" fill="currentColor"/>
+                <circle cx="12" cy="3.5" r="1.5" fill="currentColor"/>
+                <circle cx="12" cy="20.5" r="1.5" fill="currentColor"/>
+                <circle cx="3.5" cy="12" r="1.5" fill="currentColor"/>
+                <circle cx="20.5" cy="12" r="1.5" fill="currentColor"/>
+              </svg>
+              <span class="brand-text">sun9</span>
+            </div>
+            <p class="footer-tagline-text">AI workflow automation platform combining visual flexibility with raw code.</p>
+          </div>
+
+          <div class="footer-col">
+            <h5 class="col-head font-mono">PRODUCT</h5>
+            <a href="#product">Workflow Studio</a>
+            <a href="#ai-workflows">AI Agents</a>
+            <a href="#integrations">Integrations</a>
+            <a href="#pricing">Pricing</a>
+          </div>
+
+          <div class="footer-col">
+            <h5 class="col-head font-mono">RESOURCES</h5>
+            <a href="#">Documentation</a>
+            <a href="#">Templates</a>
+            <a href="#">API Reference</a>
+            <a href="#">Changelog</a>
+          </div>
+
+          <div class="footer-col">
+            <h5 class="col-head font-mono">COMPANY</h5>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+            <a href="#">Security</a>
+          </div>
+
+          <div class="footer-col">
+            <h5 class="col-head font-mono">LEGAL</h5>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Status Page</a>
+          </div>
+        </div>
+
+        <div class="container footer-sub-bar font-mono">
+          <p>© 2026 sun9 Technologies Inc. All rights reserved.</p>
+          <div class="footer-social-links">
+            <a href="#">GitHub</a>
+            <a href="#">Twitter / X</a>
+            <a href="#">Discord</a>
+            <a href="#">LinkedIn</a>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+
+
+    <!-- --------------------------------------------------------------------- -->
+    <!-- VIEW B: PRODUCTION CUSTOMER DASHBOARD & WORKFLOW STUDIO (IDE)          -->
+    <!-- --------------------------------------------------------------------- -->
+    <div id="view-dashboard" class="view-dashboard" style="display: none;">
+      <div class="app-shell">
+
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar">
+          <div class="sidebar-top">
+            <div class="sidebar-brand">
+              <svg class="sun9-glyph" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="3.5" fill="currentColor"/>
+                <circle cx="12" cy="3.5" r="1.5" fill="currentColor"/>
+                <circle cx="12" cy="20.5" r="1.5" fill="currentColor"/>
+                <circle cx="3.5" cy="12" r="1.5" fill="currentColor"/>
+                <circle cx="20.5" cy="12" r="1.5" fill="currentColor"/>
+              </svg>
+              <span class="brand-text">sun9</span>
+              <span class="env-pill font-mono">PROD</span>
+            </div>
+
+            <nav class="sidebar-menu">
+              <button class="nav-item active" data-tab="overview">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="7" height="7"/>
+                  <rect x="14" y="3" width="7" height="7"/>
+                  <rect x="14" y="14" width="7" height="7"/>
+                  <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                <span>Overview</span>
+              </button>
+
+              <button class="nav-item" data-tab="studio">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                  <polyline points="2 17 12 22 22 17"/>
+                  <polyline points="2 12 12 17 22 12"/>
+                </svg>
+                <span>Workflow Studio</span>
+              </button>
+
+              <button class="nav-item" data-tab="executions">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+                <span>Executions</span>
+              </button>
+
+              <button class="nav-item" data-tab="apikeys">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 2l-2 2m-1.5 1.5L14 9l-1.5-1.5L11 9l-1.5-1.5L8 9 3 14v7h7l5-5 1.5 1.5L18 16l1.5-1.5L21 16l2-2-1.5-1.5L23 11l-2-2z"/>
+                </svg>
+                <span>API Keys</span>
+              </button>
+
+              <button class="nav-item" data-tab="billing">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                  <line x1="1" y1="10" x2="23" y2="10"/>
+                </svg>
+                <span>Billing</span>
+              </button>
+            </nav>
+          </div>
+
+          <!-- Bottom Profile -->
+          <div class="sidebar-bottom">
+            <div class="user-widget">
+              <div class="user-avatar font-mono" id="sidebar-user-avatar">AR</div>
+              <div class="user-info">
+                <div class="user-name" id="sidebar-user-name">Alex Rivera</div>
+                <div class="user-plan font-mono" id="sidebar-plan-label">Pro Plan</div>
+              </div>
+            </div>
+            <button class="btn btn-ghost btn-xs btn-full" id="btn-logout" style="margin-top: 8px; color: var(--text-tertiary);">
+              <span>Log out</span>
+            </button>
+          </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="app-main">
+
+          <!-- TAB 1: OVERVIEW -->
+          <div class="tab-pane active" id="pane-overview">
+            <div class="pane-header">
+              <div>
+                <h1 class="pane-title">Overview</h1>
+                <p class="pane-desc">System health, execution metrics, and quota utilization.</p>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-quick-launch-studio">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                  <polyline points="2 17 12 22 22 17"/>
+                  <polyline points="2 12 12 17 22 12"/>
+                </svg>
+                <span>Open Studio</span>
+              </button>
+            </div>
+
+            <!-- Compact KPI Row -->
+            <div class="kpi-grid">
+              <div class="kpi-card">
+                <div class="kpi-head">
+                  <span class="kpi-label">Executions (30d)</span>
+                  <span class="kpi-trend positive font-mono">+12%</span>
+                </div>
+                <div class="kpi-value font-mono" id="kpi-exec-val">8,421</div>
+                <div class="kpi-sub font-mono" id="kpi-exec-sub">Quota: 25,000 / mo</div>
+              </div>
+
+              <div class="kpi-card">
+                <div class="kpi-head">
+                  <span class="kpi-label">Active Workflows</span>
+                  <span class="kpi-trend positive font-mono">+3 new</span>
+                </div>
+                <div class="kpi-value font-mono" id="kpi-workflow-val">14</div>
+                <div class="kpi-sub font-mono" id="kpi-workflow-sub">Limit: 50 slots</div>
+              </div>
+
+              <div class="kpi-card">
+                <div class="kpi-head">
+                  <span class="kpi-label">Success Rate</span>
+                  <span class="kpi-trend neutral font-mono">99.9% SLA</span>
+                </div>
+                <div class="kpi-value font-mono text-success">98.7%</div>
+                <div class="kpi-sub font-mono">0 errors detected</div>
+              </div>
+
+              <div class="kpi-card">
+                <div class="kpi-head">
+                  <span class="kpi-label">API Quota</span>
+                  <span class="kpi-trend neutral font-mono">Healthy</span>
+                </div>
+                <div class="kpi-value font-mono">72%</div>
+                <div class="kpi-sub font-mono">18k of 25k reqs</div>
+              </div>
+            </div>
+
+            <!-- Split Section -->
+            <div class="dashboard-split">
+              <div class="content-box">
+                <div class="box-head">
+                  <h3 class="box-title">Recent Executions</h3>
+                  <button class="link-btn font-mono" id="btn-view-all-execs">View all →</button>
+                </div>
+
+                <div class="table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Workflow</th>
+                        <th>Trigger</th>
+                        <th>Status</th>
+                        <th>Latency</th>
+                        <th>Time</th>
+                      </tr>
+                    </thead>
+                    <tbody id="table-recent-execs">
+                      <tr>
+                        <td class="font-medium">Lead Enrichment Agent</td>
+                        <td class="font-mono text-muted">Webhook</td>
+                        <td><span class="status-chip success">Success</span></td>
+                        <td class="font-mono">240ms</td>
+                        <td class="text-muted">Just now</td>
+                      </tr>
+                      <tr>
+                        <td class="font-medium">Stripe Invoice Router</td>
+                        <td class="font-mono text-muted">Stripe Event</td>
+                        <td><span class="status-chip success">Success</span></td>
+                        <td class="font-mono">180ms</td>
+                        <td class="text-muted">4m ago</td>
+                      </tr>
+                      <tr>
+                        <td class="font-medium">DB Sync &amp; Vector Embedding</td>
+                        <td class="font-mono text-muted">Cron</td>
+                        <td><span class="status-chip success">Success</span></td>
+                        <td class="font-mono">620ms</td>
+                        <td class="text-muted">12m ago</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="content-box">
+                <div class="box-head">
+                  <h3 class="box-title">Isolated Instance</h3>
+                  <span class="status-chip success font-mono">Active</span>
+                </div>
+
+                <div class="instance-details-list font-mono">
+                  <div class="instance-row">
+                    <span class="k">Endpoint</span>
+                    <span class="v">https://node-us1.app.sun9.io</span>
+                  </div>
+                  <div class="instance-row">
+                    <span class="k">Runtime</span>
+                    <span class="v">Node 24 / Redis 7 Queue</span>
+                  </div>
+                  <div class="instance-row">
+                    <span class="k">Cluster</span>
+                    <span class="v">us-east-virginia-01</span>
+                  </div>
+                  <div class="instance-row">
+                    <span class="k">SSL Cert</span>
+                    <span class="v">TLS 1.3 / Auto-Renew</span>
+                  </div>
+                </div>
+
+                <div class="instance-actions">
+                  <button class="btn btn-secondary btn-sm" id="btn-restart-sandbox">Restart Engine</button>
+                  <button class="btn btn-primary btn-sm" id="btn-launch-studio-tab">Launch Studio</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: WORKFLOW STUDIO -->
+          <div class="tab-pane" id="pane-studio">
+            <div class="studio-ide-shell">
+              <div class="ide-header">
+                <div class="ide-flow-name font-mono">
+                  <span class="dot-live"></span>
+                  <span>customer-enrichment-v2.flow</span>
+                  <span class="flow-version-tag">v1.4.0</span>
+                </div>
+
+                <div class="ide-toolbar">
+                  <button class="btn btn-secondary btn-xs" id="btn-studio-save">Save</button>
+                  <button class="btn btn-primary btn-xs" id="btn-studio-run">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                      <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    <span>Run Flow</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="ide-body">
+                <div class="ide-library">
+                  <div class="library-head font-mono">
+                    <span class="lib-title">NODE LIBRARY</span>
+                  </div>
+                  <div class="node-library-list">
+                    <div class="lib-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>Webhook Intake</span></div>
+                    <div class="lib-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg><span>AI Agent (LLM)</span></div>
+                    <div class="lib-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Branch Condition</span></div>
+                    <div class="lib-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg><span>HTTP Request</span></div>
+                    <div class="lib-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/></svg><span>PostgreSQL</span></div>
+                  </div>
+                </div>
+
+                <div class="ide-canvas-area">
+                  <div class="canvas-grid-bg" id="studio-interactive-canvas">
+                    <div class="studio-flow-container">
+                      <div class="studio-node active" id="snode-1">
+                        <div class="snode-type font-mono">TRIGGER</div>
+                        <div class="snode-name">Webhook Intake</div>
+                        <div class="snode-status font-mono">Ready</div>
+                      </div>
+                      <div class="snode-line" id="sline-1"></div>
+                      <div class="studio-node" id="snode-2">
+                        <div class="snode-type font-mono">AI AGENT</div>
+                        <div class="snode-name">Score Lead Intent</div>
+                        <div class="snode-status font-mono">Standby</div>
+                      </div>
+                      <div class="snode-line" id="sline-2"></div>
+                      <div class="studio-node" id="snode-3">
+                        <div class="snode-type font-mono">CONDITION</div>
+                        <div class="snode-name">Evaluate Score &gt; 80</div>
+                        <div class="snode-status font-mono">Standby</div>
+                      </div>
+                      <div class="snode-line" id="sline-3"></div>
+                      <div class="studio-node" id="snode-4">
+                        <div class="snode-type font-mono">ACTION</div>
+                        <div class="snode-name">Postgres Upsert</div>
+                        <div class="snode-status font-mono">Standby</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="ide-terminal">
+                    <div class="terminal-bar font-mono">
+                      <span class="term-title">EXECUTION LOGS</span>
+                      <span class="term-status" id="studio-term-status">Idle</span>
+                    </div>
+                    <div class="terminal-body font-mono" id="studio-terminal-logs">
+                      <div class="term-line text-muted">[2026-08-18 14:40:02] Engine initialized. Listening for workflow trigger signals...</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="ide-inspector">
+                  <div class="inspector-head font-mono">
+                    <span class="lib-title">NODE INSPECTOR</span>
+                  </div>
+                  <div class="inspector-body">
+                    <div class="form-group">
+                      <label class="form-label">Selected Node</label>
+                      <input type="text" class="input-ctrl font-mono" readonly value="AI Agent (Claude 3.5 Sonnet)" />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Model Provider</label>
+                      <select class="input-ctrl">
+                        <option>Anthropic • claude-3-5-sonnet</option>
+                        <option>OpenAI • gpt-4o-mini</option>
+                        <option>Google • gemini-1.5-pro</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Temperature</label>
+                      <input type="text" class="input-ctrl font-mono" value="0.2" />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Prompt Instructions</label>
+                      <textarea class="input-ctrl font-mono" rows="3">Analyze the incoming lead payload. Score urgency between 1-100 and extract verified company domain.</textarea>
+                    </div>
+
+                    <button class="btn btn-secondary btn-full btn-xs" id="btn-save-node-config">Apply Configuration</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: EXECUTIONS -->
+          <div class="tab-pane" id="pane-executions">
+            <div class="pane-header">
+              <div>
+                <h1 class="pane-title">Executions</h1>
+                <p class="pane-desc">Audit trail of all triggers, step executions, and latency metrics.</p>
+              </div>
+            </div>
+
+            <div class="content-box">
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Execution ID</th>
+                      <th>Workflow</th>
+                      <th>Trigger Source</th>
+                      <th>Status</th>
+                      <th>Duration</th>
+                      <th>Timestamp</th>
+                    </tr>
+                  </thead>
+                  <tbody id="table-full-executions">
+                    <tr>
+                      <td class="font-mono text-muted">ex_901a8f</td>
+                      <td class="font-medium">Lead Enrichment Agent</td>
+                      <td class="font-mono">Webhook</td>
+                      <td><span class="status-chip success">Success</span></td>
+                      <td class="font-mono">240ms</td>
+                      <td class="text-muted">Aug 18, 14:38:12</td>
+                    </tr>
+                    <tr>
+                      <td class="font-mono text-muted">ex_9003c2</td>
+                      <td class="font-medium">Stripe Invoice Router</td>
+                      <td class="font-mono">Stripe Webhook</td>
+                      <td><span class="status-chip success">Success</span></td>
+                      <td class="font-mono">180ms</td>
+                      <td class="text-muted">Aug 18, 14:34:00</td>
+                    </tr>
+                    <tr>
+                      <td class="font-mono text-muted">ex_8991b5</td>
+                      <td class="font-medium">DB Sync &amp; Vector Embedding</td>
+                      <td class="font-mono">Cron Trigger</td>
+                      <td><span class="status-chip success">Success</span></td>
+                      <td class="font-mono">620ms</td>
+                      <td class="text-muted">Aug 18, 14:26:45</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: API KEYS -->
+          <div class="tab-pane" id="pane-apikeys">
+            <div class="pane-header">
+              <div>
+                <h1 class="pane-title">API Keys</h1>
+                <p class="pane-desc">Authenticate external webhooks and trigger workflows via REST API.</p>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-create-key">
+                <span>+ Create API Key</span>
+              </button>
+            </div>
+
+            <div class="content-box">
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Key Name</th>
+                      <th>Secret Key</th>
+                      <th>Created</th>
+                      <th>Last Used</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="table-api-keys">
+                    <!-- Populated dynamically via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 5: BILLING -->
+          <div class="tab-pane" id="pane-billing">
+            <div class="pane-header">
+              <div>
+                <h1 class="pane-title">Billing &amp; Subscription</h1>
+                <p class="pane-desc">Manage your plan, quota limits, and payment methods.</p>
+              </div>
+            </div>
+
+            <div class="billing-cards-grid">
+              <div class="content-box">
+                <div class="box-head">
+                  <h3 class="box-title">Current Plan</h3>
+                  <span class="status-chip success font-mono" id="billing-status-chip">Active</span>
+                </div>
+                <div class="plan-hero-display">
+                  <div class="plan-hero-name" id="billing-current-plan">Pro Plan</div>
+                  <div class="plan-hero-price font-mono" id="billing-current-price">$29 / month</div>
+                </div>
+                <p class="text-muted text-sm">Next billing cycle on September 18, 2026 via Stripe.</p>
+
+                <div class="billing-quota-trackers">
+                  <div class="quota-item">
+                    <div class="quota-meta font-mono">
+                      <span>Executions</span>
+                      <span id="billing-exec-quota">8,421 / 25,000 (34%)</span>
+                    </div>
+                    <div class="meter-bar"><div class="meter-fill" id="billing-exec-bar" style="width: 34%;"></div></div>
+                  </div>
+                  <div class="quota-item">
+                    <div class="quota-meta font-mono">
+                      <span>Workflows</span>
+                      <span id="billing-workflow-quota">14 / 50 (28%)</span>
+                    </div>
+                    <div class="meter-bar"><div class="meter-fill" id="billing-workflow-bar" style="width: 28%;"></div></div>
+                  </div>
+                </div>
+
+                <div class="billing-actions">
+                  <button class="btn btn-secondary btn-sm" id="btn-change-subscription">Change Plan</button>
+                  <button class="btn btn-ghost btn-sm" id="btn-polar-portal">Polar Customer Portal ↗</button>
+                </div>
+              </div>
+
+              <div class="content-box">
+                <div class="box-head">
+                  <h3 class="box-title">Payment Method</h3>
+                </div>
+                <div class="card-display font-mono">
+                  <div class="card-brand">POLAR MoR</div>
+                  <div class="card-num">•••• •••• •••• 4242</div>
+                  <div class="card-exp text-muted">Auto-Renew Active</div>
+                </div>
+                <p class="text-muted text-sm">Receipts &amp; invoices are managed securely by Polar.sh.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- 3. AUTHENTICATION MODAL (LOGIN / SIGNUP)                                   -->
+  <!-- ========================================================================= -->
+  <div class="modal-backdrop" id="auth-modal" style="display: none;">
+    <div class="modal-window">
+      <div class="modal-head">
+        <div class="modal-title-group">
+          <svg class="sun9-glyph" width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="3.5" fill="currentColor"/>
+            <circle cx="12" cy="3.5" r="1.5" fill="currentColor"/>
+            <circle cx="12" cy="20.5" r="1.5" fill="currentColor"/>
+            <circle cx="3.5" cy="12" r="1.5" fill="currentColor"/>
+            <circle cx="20.5" cy="12" r="1.5" fill="currentColor"/>
+          </svg>
+          <span class="modal-title font-medium" id="auth-modal-title">Log in to sun9</span>
+        </div>
+        <button class="modal-close" id="btn-close-auth-modal">×</button>
+      </div>
+
+      <div class="modal-content">
+        <!-- Auth Mode Switcher -->
+        <div class="auth-switcher">
+          <button class="auth-tab-btn active" id="tab-auth-login">Log In</button>
+          <button class="auth-tab-btn" id="tab-auth-signup">Create Account</button>
+        </div>
+
+        <div id="auth-error-box" class="auth-error-alert" style="display: none;"></div>
+
+        <!-- Login Form -->
+        <form id="form-auth-login">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="input-ctrl" id="login-email" required placeholder="alex@company.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="input-ctrl" id="login-password" required placeholder="••••••••" />
+          </div>
+          <button type="submit" class="btn btn-primary btn-full btn-md" id="btn-submit-login">
+            <span>Log In to Workspace</span>
+          </button>
+        </form>
+
+        <!-- Signup Form -->
+        <form id="form-auth-signup" style="display: none;">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="input-ctrl" id="signup-name" required placeholder="Alex Rivera" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Work Email</label>
+            <input type="email" class="input-ctrl" id="signup-email" required placeholder="alex@company.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password (min 6 characters)</label>
+            <input type="password" class="input-ctrl" id="signup-password" required placeholder="••••••••" />
+          </div>
+          <button type="submit" class="btn btn-primary btn-full btn-md" id="btn-submit-signup">
+            <span>Create Free Workspace</span>
+          </button>
+        </form>
+
+        <div class="modal-secure-badge font-mono">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <span>Encrypted Session • JWT Token Authentication</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 4. POLAR.SH CHECKOUT MODAL                                                -->
+  <!-- ========================================================================= -->
+  <div class="modal-backdrop" id="checkout-modal" style="display: none;">
+    <div class="modal-window">
+      <div class="modal-head">
+        <div class="modal-title-group">
+          <svg class="sun9-glyph" width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="3.5" fill="currentColor"/>
+            <circle cx="12" cy="3.5" r="1.5" fill="currentColor"/>
+            <circle cx="12" cy="20.5" r="1.5" fill="currentColor"/>
+            <circle cx="3.5" cy="12" r="1.5" fill="currentColor"/>
+            <circle cx="20.5" cy="12" r="1.5" fill="currentColor"/>
+          </svg>
+          <span class="modal-title font-medium">sun9 Checkout</span>
+        </div>
+        <button class="modal-close" id="btn-close-modal">×</button>
+      </div>
+
+      <div class="modal-content">
+        <div class="checkout-plan-summary">
+          <div class="summary-line">
+            <span class="font-medium" id="modal-plan-name">Pro Plan</span>
+            <span class="font-mono font-medium" id="modal-plan-price">$29/mo</span>
+          </div>
+          <p class="summary-sub text-muted">Instant activation • 25,000 executions • Redis Queue</p>
+        </div>
+
+        <form id="checkout-form" class="checkout-form">
+          <div class="form-group">
+            <label class="form-label">Customer Email</label>
+            <input type="email" class="input-ctrl" id="checkout-email" required value="alex@company.com" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Payment Information</label>
+            <input type="text" class="input-ctrl font-mono" placeholder="4242 •••• •••• 4242" required value="4242 4242 4242 4242" />
+            <div class="form-row-compact">
+              <input type="text" class="input-ctrl font-mono" placeholder="MM / YY" required value="12/28" />
+              <input type="text" class="input-ctrl font-mono" placeholder="CVC" required value="921" />
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full btn-md" id="btn-confirm-pay">
+            <span>Pay &amp; Activate with Polar.sh</span>
+          </button>
+        </form>
+
+        <div class="modal-secure-badge font-mono">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <span>Merchant of Record Protection via Polar.sh</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sun9 — Superadmin Control Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .admin-topbar {
+      background-color: #0c0c10;
+      border-bottom: 1px solid var(--border-subtle);
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+    }
+    .admin-topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .admin-lock-badge {
+      background-color: rgba(168, 85, 247, 0.15);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      padding: 2px 8px;
+      border-radius: var(--radius-xs);
+      font-size: 0.6875rem;
+      letter-spacing: 0.05em;
+    }
+    .admin-topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <!-- Admin Topbar -->
+  <div class="admin-topbar font-mono">
+    <div class="admin-topbar-left">
+      <div class="brand-link" style="font-size: 1rem;">
+        <svg class="sun9-glyph" width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="3.5" fill="currentColor"/>
+          <circle cx="12" cy="3.5" r="1.5" fill="currentColor"/>
+          <circle cx="12" cy="20.5" r="1.5" fill="currentColor"/>
+          <circle cx="3.5" cy="12" r="1.5" fill="currentColor"/>
+          <circle cx="20.5" cy="12" r="1.5" fill="currentColor"/>
+        </svg>
+        <span>sun9 Admin Control Center</span>
+      </div>
+      <span class="admin-lock-badge">SUPERADMIN CONSOLE</span>
+    </div>
+
+    <div class="admin-topbar-right">
+      <a href="/" class="btn btn-ghost btn-xs">← Back to Public Website</a>
+    </div>
+  </div>
+
+  <!-- Admin Shell -->
+  <div class="app-shell">
+    <aside class="app-sidebar admin-sidebar">
+      <div class="sidebar-top">
+        <nav class="sidebar-menu">
+          <button class="nav-item active" data-admin-tab="overview">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 3v18h18"/>
+              <path d="M18 9l-5 5-4-4-3 3"/>
+            </svg>
+            <span>Metrics &amp; MRR</span>
+          </button>
+
+          <button class="nav-item" data-admin-tab="tenants">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <span>Tenants &amp; Users</span>
+          </button>
+
+          <button class="nav-item" data-admin-tab="clusters">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
+              <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+              <line x1="6" y1="6" x2="6.01" y2="6"/>
+              <line x1="6" y1="18" x2="6.01" y2="18"/>
+            </svg>
+            <span>Worker Clusters</span>
+          </button>
+
+          <button class="nav-item" data-admin-tab="audit">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="4 17 10 11 4 5"/>
+              <line x1="12" y1="19" x2="20" y2="19"/>
+            </svg>
+            <span>Global Audit Logs</span>
+          </button>
+
+          <button class="nav-item" data-admin-tab="settings">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            <span>Platform Settings</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="user-widget">
+          <div class="user-avatar font-mono admin-avatar">SU</div>
+          <div class="user-info">
+            <div class="user-name">Root Administrator</div>
+            <div class="user-plan font-mono text-success">Superadmin (All Orgs)</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="app-main">
+
+      <!-- TAB 1: METRICS & MRR -->
+      <div class="admin-tab-pane active" id="admin-pane-overview">
+        <div class="pane-header">
+          <div>
+            <h1 class="pane-title">Platform Operations</h1>
+            <p class="pane-desc">Real-time telemetry across all multi-tenant customer clusters.</p>
+          </div>
+          <span class="status-chip success font-mono">Engine Status: Optimal (99.94%)</span>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-head">
+              <span class="kpi-label">Monthly Recurring Rev</span>
+              <span class="kpi-trend positive font-mono">+18.4% MRR</span>
+            </div>
+            <div class="kpi-value font-mono" id="admin-mrr-val">$14,280</div>
+            <div class="kpi-sub font-mono">Stripe Subscriptions Sync</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-head">
+              <span class="kpi-label">Total Registered Tenants</span>
+              <span class="kpi-trend positive font-mono">+84 this week</span>
+            </div>
+            <div class="kpi-value font-mono" id="admin-users-val">1,420</div>
+            <div class="kpi-sub font-mono">1,395 active / 25 trial</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-head">
+              <span class="kpi-label">Monthly Executions</span>
+              <span class="kpi-trend positive font-mono">4.2M events</span>
+            </div>
+            <div class="kpi-value font-mono">4,218,090</div>
+            <div class="kpi-sub font-mono">Avg Latency: 164ms</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-head">
+              <span class="kpi-label">Redis Worker Queue</span>
+              <span class="kpi-trend positive font-mono">0 backpressure</span>
+            </div>
+            <div class="kpi-value font-mono text-success">Healthy</div>
+            <div class="kpi-sub font-mono">72 active workers</div>
+          </div>
+        </div>
+
+        <div class="dashboard-split">
+          <div class="content-box">
+            <div class="box-head">
+              <h3 class="box-title">Recent Cross-Tenant Executions</h3>
+              <span class="font-mono text-muted text-sm">Live Stream</span>
+            </div>
+
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Tenant / Org</th>
+                    <th>Workflow</th>
+                    <th>Worker Node</th>
+                    <th>Status</th>
+                    <th>Duration</th>
+                  </tr>
+                </thead>
+                <tbody id="table-admin-live-execs">
+                  <tr>
+                    <td class="font-mono text-muted">alex@company.com</td>
+                    <td class="font-medium">Lead Enrichment Agent</td>
+                    <td class="font-mono">us-east-worker-04</td>
+                    <td><span class="status-chip success">Success</span></td>
+                    <td class="font-mono">240ms</td>
+                  </tr>
+                  <tr>
+                    <td class="font-mono text-muted">devin@fintechcorp.io</td>
+                    <td class="font-medium">Binance Trade Arbitrage</td>
+                    <td class="font-mono">us-east-worker-12</td>
+                    <td><span class="status-chip success">Success</span></td>
+                    <td class="font-mono">112ms</td>
+                  </tr>
+                  <tr>
+                    <td class="font-mono text-muted">sarah@biohealth.ai</td>
+                    <td class="font-medium">PubMed RAG Sync</td>
+                    <td class="font-mono">eu-central-worker-01</td>
+                    <td><span class="status-chip success">Success</span></td>
+                    <td class="font-mono">840ms</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="content-box">
+            <div class="box-head">
+              <h3 class="box-title">Cluster Nodes Status</h3>
+              <span class="status-chip success font-mono">4 Regions Active</span>
+            </div>
+
+            <div class="instance-details-list font-mono">
+              <div class="instance-row">
+                <span class="k">us-east-virginia-01</span>
+                <span class="v text-success">CPU: 28% • 12 workers</span>
+              </div>
+              <div class="instance-row">
+                <span class="k">us-east-virginia-02</span>
+                <span class="v text-success">CPU: 44% • 24 workers</span>
+              </div>
+              <div class="instance-row">
+                <span class="k">eu-central-frankfurt-01</span>
+                <span class="v text-success">CPU: 36% • 24 workers</span>
+              </div>
+              <div class="instance-row">
+                <span class="k">ap-southeast-singapore-01</span>
+                <span class="v text-success">CPU: 19% • 12 workers</span>
+              </div>
+            </div>
+
+            <div class="instance-actions">
+              <button class="btn btn-secondary btn-sm" id="btn-admin-flush-cache">Flush Cache</button>
+              <button class="btn btn-primary btn-sm" id="btn-admin-add-worker">+ Spawn Worker Node</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: TENANTS & USERS -->
+      <div class="admin-tab-pane" id="admin-pane-tenants">
+        <div class="pane-header">
+          <div>
+            <h1 class="pane-title">Tenants &amp; User Directory</h1>
+            <p class="pane-desc">Manage customer subscriptions, quotas, and account status.</p>
+          </div>
+        </div>
+
+        <div class="content-box">
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Tenant Name</th>
+                  <th>Email / ID</th>
+                  <th>Subscription Plan</th>
+                  <th>Workflows</th>
+                  <th>Executions (30d)</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="table-admin-tenants">
+                <!-- Loaded via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: WORKER CLUSTERS -->
+      <div class="admin-tab-pane" id="admin-pane-clusters">
+        <div class="pane-header">
+          <div>
+            <h1 class="pane-title">Cluster Infrastructure</h1>
+            <p class="pane-desc">Real-time status of all Docker and Kubernetes container pools.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-admin-deploy-cluster">+ Deploy New Region</button>
+        </div>
+
+        <div class="core-grid-3col">
+          <div class="core-card">
+            <div class="box-head">
+              <h3 class="core-card-title">us-east-virginia-01</h3>
+              <span class="status-chip success font-mono">Primary Master</span>
+            </div>
+            <div class="instance-details-list font-mono">
+              <div class="instance-row"><span class="k">CPU Load:</span><span class="v">28%</span></div>
+              <div class="instance-row"><span class="k">Memory:</span><span class="v">4.2 / 16 GB</span></div>
+              <div class="instance-row"><span class="k">Workers:</span><span class="v">12 Processes</span></div>
+              <div class="instance-row"><span class="k">Status:</span><span class="v text-success">Healthy</span></div>
+            </div>
+          </div>
+
+          <div class="core-card">
+            <div class="box-head">
+              <h3 class="core-card-title">eu-central-frankfurt-01</h3>
+              <span class="status-chip success font-mono">Worker Pool B</span>
+            </div>
+            <div class="instance-details-list font-mono">
+              <div class="instance-row"><span class="k">CPU Load:</span><span class="v">36%</span></div>
+              <div class="instance-row"><span class="k">Memory:</span><span class="v">6.1 / 32 GB</span></div>
+              <div class="instance-row"><span class="k">Workers:</span><span class="v">24 Processes</span></div>
+              <div class="instance-row"><span class="k">Status:</span><span class="v text-success">Healthy</span></div>
+            </div>
+          </div>
+
+          <div class="core-card">
+            <div class="box-head">
+              <h3 class="core-card-title">ap-southeast-singapore-01</h3>
+              <span class="status-chip success font-mono">Worker Pool C</span>
+            </div>
+            <div class="instance-details-list font-mono">
+              <div class="instance-row"><span class="k">CPU Load:</span><span class="v">19%</span></div>
+              <div class="instance-row"><span class="k">Memory:</span><span class="v">3.4 / 16 GB</span></div>
+              <div class="instance-row"><span class="k">Workers:</span><span class="v">12 Processes</span></div>
+              <div class="instance-row"><span class="k">Status:</span><span class="v text-success">Healthy</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: AUDIT LOGS -->
+      <div class="admin-tab-pane" id="admin-pane-audit">
+        <div class="pane-header">
+          <div>
+            <h1 class="pane-title">Global Audit Trail</h1>
+            <p class="pane-desc">High-throughput system logs across all worker nodes.</p>
+          </div>
+        </div>
+
+        <div class="content-box">
+          <div class="table-container">
+            <table class="data-table font-mono">
+              <thead>
+                <tr>
+                  <th>Level</th>
+                  <th>Worker Node</th>
+                  <th>Tenant Email</th>
+                  <th>Message</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="table-admin-logs">
+                <tr>
+                  <td><span class="status-chip success">INFO</span></td>
+                  <td class="text-muted">Worker-04</td>
+                  <td>alex@company.com</td>
+                  <td>Execution #ex_901 completed successfully (240ms)</td>
+                  <td class="text-muted">Just now</td>
+                </tr>
+                <tr>
+                  <td><span class="status-chip success">INFO</span></td>
+                  <td class="text-muted">Worker-12</td>
+                  <td>devin@fintechcorp.io</td>
+                  <td>Webhook accepted POST /v1/trades (1.2kb)</td>
+                  <td class="text-muted">1m ago</td>
+                </tr>
+                <tr>
+                  <td><span class="status-chip" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">WARN</span></td>
+                  <td class="text-muted">Worker-08</td>
+                  <td>dkim@sandboxtech.net</td>
+                  <td>Rate limit threshold reached (100 req/min)</td>
+                  <td class="text-muted">4m ago</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: SETTINGS -->
+      <div class="admin-tab-pane" id="admin-pane-settings">
+        <div class="pane-header">
+          <div>
+            <h1 class="pane-title">Platform Configuration</h1>
+            <p class="pane-desc">Manage global feature flags, rate limits, and n8n backend endpoints.</p>
+          </div>
+        </div>
+
+        <div class="billing-cards-grid">
+          <div class="content-box">
+            <div class="box-head">
+              <h3 class="box-title">System Feature Flags</h3>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Maintenance Mode</label>
+              <select class="input-ctrl" id="admin-setting-maintenance">
+                <option value="false">Disabled (Platform Online)</option>
+                <option value="true">Enabled (Read-Only Mode)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">New Tenant Signups</label>
+              <select class="input-ctrl" id="admin-setting-signups">
+                <option value="true">Open (Public Registration)</option>
+                <option value="false">Closed (Invite Only)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Global API Rate Limit (Req / Minute)</label>
+              <input type="number" class="input-ctrl font-mono" id="admin-setting-ratelimit" value="1200" />
+            </div>
+
+            <button class="btn btn-primary btn-sm" id="btn-admin-save-settings">Save Global Settings</button>
+          </div>
+
+          <div class="content-box">
+            <div class="box-head">
+              <h3 class="box-title">n8n Workflow Engine Backend</h3>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Core Engine Webhook Endpoint</label>
+              <input type="text" class="input-ctrl font-mono" id="admin-setting-n8n-url" value="http://n8n-core:5678/api/v1" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Master Secret Key</label>
+              <input type="text" class="input-ctrl font-mono" readonly value="sun9_master_sec_99a818b29f0012c4" />
+            </div>
+
+            <p class="text-muted text-sm font-mono">Changes take effect immediately across all cluster nodes.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const adminNavItems = document.querySelectorAll('.sidebar-menu .nav-item');
+      const adminTabPanes = document.querySelectorAll('.admin-tab-pane');
+      const tableAdminTenants = document.getElementById('table-admin-tenants');
+      const btnAdminSaveSettings = document.getElementById('btn-admin-save-settings');
+      const btnAdminFlushCache = document.getElementById('btn-admin-flush-cache');
+      const btnAdminAddWorker = document.getElementById('btn-admin-add-worker');
+      const btnAdminDeployCluster = document.getElementById('btn-admin-deploy-cluster');
+
+      function switchAdminTab(tabId) {
+        adminNavItems.forEach(item => {
+          item.classList.toggle('active', item.getAttribute('data-admin-tab') === tabId);
+        });
+        adminTabPanes.forEach(pane => {
+          pane.classList.toggle('active', pane.id === `admin-pane-${tabId}`);
+        });
+      }
+
+      adminNavItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const tab = item.getAttribute('data-admin-tab');
+          switchAdminTab(tab);
+        });
+      });
+
+      async function loadAdminTenants() {
+        if (!tableAdminTenants) return;
+        try {
+          const res = await fetch('/api/admin/users');
+          const data = await res.json();
+          if (data.success && data.tenants) {
+            renderTenantsTable(data.tenants);
+          }
+        } catch {}
+      }
+
+      function renderTenantsTable(tenants) {
+        tableAdminTenants.innerHTML = '';
+        tenants.forEach(t => {
+          const tr = document.createElement('tr');
+          const isSuspended = t.status === 'Suspended';
+          tr.innerHTML = `
+            <td class="font-medium">${t.name}</td>
+            <td><span class="font-mono text-muted text-sm">${t.email}</span></td>
+            <td>
+              <select class="input-ctrl font-mono tenant-plan-select" data-user-id="${t.id}" style="padding: 2px 6px; font-size: 0.75rem; width: 110px;">
+                <option value="free" ${t.planTier === 'free' ? 'selected' : ''}>Free ($0)</option>
+                <option value="pro" ${t.planTier === 'pro' ? 'selected' : ''}>Pro ($29)</option>
+                <option value="scale" ${t.planTier === 'scale' ? 'selected' : ''}>Scale ($199)</option>
+              </select>
+            </td>
+            <td class="font-mono">${t.workflows} slots</td>
+            <td class="font-mono">${t.executions.toLocaleString()}</td>
+            <td>
+              <span class="status-chip ${isSuspended ? 'danger' : 'success'} font-mono">${t.status}</span>
+            </td>
+            <td>
+              <div class="action-btn-group">
+                <button class="btn btn-ghost btn-xs btn-toggle-tenant-status ${isSuspended ? 'text-success' : 'text-danger'}" data-user-id="${t.id}">
+                  ${isSuspended ? 'Activate' : 'Suspend'}
+                </button>
+              </div>
+            </td>
+          `;
+          tableAdminTenants.appendChild(tr);
+        });
+      }
+
+      document.addEventListener('change', async (e) => {
+        if (e.target.classList.contains('tenant-plan-select')) {
+          const userId = e.target.getAttribute('data-user-id');
+          const plan = e.target.value;
+          try {
+            await fetch('/api/admin/users/update-plan', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId, plan })
+            });
+            alert(`Tenant ${userId} updated to ${plan.toUpperCase()} plan!`);
+          } catch (err) {
+            console.error(err);
+          }
+        }
+      });
+
+      document.addEventListener('click', async (e) => {
+        if (e.target.classList.contains('btn-toggle-tenant-status')) {
+          const userId = e.target.getAttribute('data-user-id');
+          try {
+            const res = await fetch('/api/admin/users/toggle-status', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId })
+            });
+            const data = await res.json();
+            if (data.success) {
+              renderTenantsTable(data.tenants);
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        }
+      });
+
+      if (btnAdminFlushCache) {
+        btnAdminFlushCache.addEventListener('click', () => {
+          btnAdminFlushCache.textContent = 'Flushing...';
+          setTimeout(() => {
+            btnAdminFlushCache.textContent = 'Cache Cleared ✓';
+            setTimeout(() => (btnAdminFlushCache.textContent = 'Flush Cache'), 1500);
+          }, 600);
+        });
+      }
+
+      if (btnAdminAddWorker) {
+        btnAdminAddWorker.addEventListener('click', () => {
+          alert('Spawning new worker container: worker-node-05 in us-east-virginia (Auto-scaling cluster).');
+        });
+      }
+
+      if (btnAdminDeployCluster) {
+        btnAdminDeployCluster.addEventListener('click', () => {
+          alert('Deploy Cluster Wizard: Initializing new Terraform worker pool.');
+        });
+      }
+
+      if (btnAdminSaveSettings) {
+        btnAdminSaveSettings.addEventListener('click', async () => {
+          const maintenance = document.getElementById('admin-setting-maintenance').value === 'true';
+          const signups = document.getElementById('admin-setting-signups').value === 'true';
+          const ratelimit = parseInt(document.getElementById('admin-setting-ratelimit').value, 10);
+          const n8nUrl = document.getElementById('admin-setting-n8n-url').value;
+
+          try {
+            const res = await fetch('/api/admin/settings', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                maintenanceMode: maintenance,
+                allowNewSignups: signups,
+                globalRateLimit: ratelimit,
+                n8nEngineEndpoint: n8nUrl
+              })
+            });
+            const data = await res.json();
+            if (data.success) {
+              btnAdminSaveSettings.textContent = 'Saved Successfully ✓';
+              setTimeout(() => (btnAdminSaveSettings.textContent = 'Save Global Settings'), 2000);
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        });
+      }
+
+      loadAdminTenants();
+    });
+  </script>
+</body>
+</html>

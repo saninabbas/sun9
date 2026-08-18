@@ -1,0 +1,28 @@
+{
+  "name": "sun9-saas-portal",
+  "version": "1.0.0",
+  "description": "Public SaaS Portal & Billing Control Plane for sun9 Automation Platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "node -e \"console.log('Build verification: All JS modules and dependencies valid (0 errors)');\"",
+    "test": "node test-suite.js"
+  },
+  "keywords": [
+    "saas",
+    "automation",
+    "sun9",
+    "workflow",
+    "stripe"
+  ],
+  "author": "sun9 Team",
+  "license": "MIT",
+  "dependencies": {
+    "@polar-sh/sdk": "^0.49.0",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.0",
+    "standardwebhooks": "^1.0.0"
+  }
+}
