@@ -1601,6 +1601,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialize Session & Studio
   loadUserSession();
+  renderUserWorkflowsTable();
   renderStudioCanvas();
   renderInspector();
 });
