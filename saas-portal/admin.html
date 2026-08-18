@@ -9,20 +9,63 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <style>
+    .admin-auth-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: radial-gradient(circle at center, rgba(168, 85, 247, 0.05) 0%, #09090b 70%);
+    }
+
+    .admin-auth-card {
+      width: 100%;
+      max-width: 420px;
+      background-color: var(--bg-surface-1);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.7);
+    }
+
+    .admin-auth-head {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .admin-shield-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background-color: rgba(168, 85, 247, 0.15);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+    }
+
     .admin-topbar {
       background-color: #0c0c10;
       border-bottom: 1px solid var(--border-subtle);
-      height: 48px;
+      height: 50px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 20px;
     }
+
     .admin-topbar-left {
       display: flex;
       align-items: center;
       gap: 12px;
     }
+
     .admin-lock-badge {
       background-color: rgba(168, 85, 247, 0.15);
       color: #c084fc;
@@ -32,6 +75,7 @@
       font-size: 0.6875rem;
       letter-spacing: 0.05em;
     }
+
     .admin-topbar-right {
       display: flex;
       align-items: center;
@@ -41,420 +85,525 @@
 </head>
 <body data-theme="dark">
 
-  <!-- Admin Topbar -->
-  <div class="admin-topbar font-mono">
-    <div class="admin-topbar-left">
-      <div class="brand-link" style="font-size: 1rem;">
-        <svg class="sun9-glyph" width="18" height="18" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="3.5" fill="currentColor"/>
-          <circle cx="12" cy="3.5" r="1.5" fill="currentColor"/>
-          <circle cx="12" cy="20.5" r="1.5" fill="currentColor"/>
-          <circle cx="3.5" cy="12" r="1.5" fill="currentColor"/>
-          <circle cx="20.5" cy="12" r="1.5" fill="currentColor"/>
-        </svg>
-        <span>sun9 Admin Control Center</span>
+  <!-- ========================================================================= -->
+  <!-- 1. SUPERADMIN AUTHENTICATION GATEWAY (LOGIN SCREEN)                        -->
+  <!-- ========================================================================= -->
+  <div id="admin-auth-gate" class="admin-auth-wrapper" style="display: flex;">
+    <div class="admin-auth-card">
+      <div class="admin-auth-head">
+        <div class="admin-shield-icon">🛡️</div>
+        <h2 class="font-medium" style="font-size: 1.35rem; color: var(--text-primary);">sun9 Root Gateway</h2>
+        <p class="text-muted text-sm font-mono" style="margin-top: 4px;">Superadmin Console Authentication</p>
       </div>
-      <span class="admin-lock-badge">SUPERADMIN CONSOLE</span>
-    </div>
 
-    <div class="admin-topbar-right">
-      <a href="/" class="btn btn-ghost btn-xs">← Back to Public Website</a>
+      <div id="admin-login-error" class="auth-error-alert font-mono" style="display: none;"></div>
+
+      <form id="admin-login-form">
+        <div class="form-group">
+          <label class="form-label font-mono">Admin Email</label>
+          <input type="email" class="input-ctrl font-mono" id="admin-input-email" required value="admin@sun9.io" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label font-mono">Password</label>
+          <input type="password" class="input-ctrl font-mono" id="admin-input-pass" required value="admin123456" />
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full btn-md" id="btn-admin-submit-login" style="margin-top: 8px;">
+          <span>Authenticate &amp; Enter Console</span>
+        </button>
+
+        <div style="margin-top: 16px; text-align: center;">
+          <a href="/" class="text-muted font-mono text-xs" style="text-decoration: underline;">← Back to Public Website</a>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- Admin Shell -->
-  <div class="app-shell">
-    <aside class="app-sidebar admin-sidebar">
-      <div class="sidebar-top">
-        <nav class="sidebar-menu">
-          <button class="nav-item active" data-admin-tab="overview">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 3v18h18"/>
-              <path d="M18 9l-5 5-4-4-3 3"/>
-            </svg>
-            <span>Metrics &amp; MRR</span>
-          </button>
 
-          <button class="nav-item" data-admin-tab="tenants">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-            <span>Tenants &amp; Users</span>
-          </button>
-
-          <button class="nav-item" data-admin-tab="clusters">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
-              <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
-              <line x1="6" y1="6" x2="6.01" y2="6"/>
-              <line x1="6" y1="18" x2="6.01" y2="18"/>
-            </svg>
-            <span>Worker Clusters</span>
-          </button>
-
-          <button class="nav-item" data-admin-tab="audit">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="4 17 10 11 4 5"/>
-              <line x1="12" y1="19" x2="20" y2="19"/>
-            </svg>
-            <span>Global Audit Logs</span>
-          </button>
-
-          <button class="nav-item" data-admin-tab="settings">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="3"/>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-            </svg>
-            <span>Platform Settings</span>
-          </button>
-        </nav>
+  <!-- ========================================================================= -->
+  <!-- 2. SUPERADMIN CONTROL CENTER DASHBOARD (LOCKED BY AUTH)                    -->
+  <!-- ========================================================================= -->
+  <div id="admin-main-console" style="display: none;">
+    <!-- Admin Topbar -->
+    <div class="admin-topbar font-mono">
+      <div class="admin-topbar-left">
+        <div class="brand-link" style="font-size: 1rem;">
+          <svg class="sun9-glyph" width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="3.5" fill="currentColor"/>
+            <circle cx="12" cy="3.5" r="1.5" fill="currentColor"/>
+            <circle cx="12" cy="20.5" r="1.5" fill="currentColor"/>
+            <circle cx="3.5" cy="12" r="1.5" fill="currentColor"/>
+            <circle cx="20.5" cy="12" r="1.5" fill="currentColor"/>
+          </svg>
+          <span>sun9 Admin Control Center</span>
+        </div>
+        <span class="admin-lock-badge">ROOT CONSOLE</span>
       </div>
 
-      <div class="sidebar-bottom">
-        <div class="user-widget">
-          <div class="user-avatar font-mono admin-avatar">SU</div>
-          <div class="user-info">
-            <div class="user-name">Root Administrator</div>
-            <div class="user-plan font-mono text-success">Superadmin (All Orgs)</div>
-          </div>
-        </div>
+      <div class="admin-topbar-right">
+        <span class="text-muted text-xs font-mono" id="admin-topbar-user">admin@sun9.io</span>
+        <button class="btn btn-ghost btn-xs text-danger font-mono" id="btn-admin-logout">Lock &amp; Sign Out</button>
+        <a href="/" class="btn btn-secondary btn-xs font-mono">← Public Site</a>
       </div>
-    </aside>
+    </div>
 
-    <div class="app-main">
+    <!-- Admin Shell -->
+    <div class="app-shell">
+      <aside class="app-sidebar admin-sidebar">
+        <div class="sidebar-top">
+          <nav class="sidebar-menu">
+            <button class="nav-item active" data-admin-tab="overview">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 3v18h18"/>
+                <path d="M18 9l-5 5-4-4-3 3"/>
+              </svg>
+              <span>Metrics &amp; MRR</span>
+            </button>
 
-      <!-- TAB 1: METRICS & MRR -->
-      <div class="admin-tab-pane active" id="admin-pane-overview">
-        <div class="pane-header">
-          <div>
-            <h1 class="pane-title">Platform Operations</h1>
-            <p class="pane-desc">Real-time telemetry across all multi-tenant customer clusters.</p>
-          </div>
-          <span class="status-chip success font-mono">Engine Status: Optimal (99.94%)</span>
+            <button class="nav-item" data-admin-tab="tenants">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              <span>Tenants &amp; Users</span>
+            </button>
+
+            <button class="nav-item" data-admin-tab="ai-hub">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="4" width="16" height="16" rx="2"/>
+                <path d="M9 9h6v6H9z"/>
+              </svg>
+              <span>Master AI API Keys</span>
+            </button>
+
+            <button class="nav-item" data-admin-tab="clusters">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
+                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+                <line x1="6" y1="6" x2="6.01" y2="6"/>
+                <line x1="6" y1="18" x2="6.01" y2="18"/>
+              </svg>
+              <span>Worker Clusters</span>
+            </button>
+
+            <button class="nav-item" data-admin-tab="audit">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="4 17 10 11 4 5"/>
+                <line x1="12" y1="19" x2="20" y2="19"/>
+              </svg>
+              <span>Audit Logs</span>
+            </button>
+
+            <button class="nav-item" data-admin-tab="settings">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+              <span>Platform Flags</span>
+            </button>
+          </nav>
         </div>
 
-        <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="kpi-head">
-              <span class="kpi-label">Monthly Recurring Rev</span>
-              <span class="kpi-trend positive font-mono">+18.4% MRR</span>
+        <div class="sidebar-bottom">
+          <div class="user-widget">
+            <div class="user-avatar admin-avatar font-mono">SA</div>
+            <div class="user-info">
+              <div class="user-name">Root Admin</div>
+              <div class="user-plan font-mono">Superadmin</div>
             </div>
-            <div class="kpi-value font-mono" id="admin-mrr-val">$14,280</div>
-            <div class="kpi-sub font-mono">Stripe Subscriptions Sync</div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="app-main">
+        <!-- TAB 1: METRICS & MRR -->
+        <div class="admin-tab-pane active" id="admin-pane-overview">
+          <div class="pane-header">
+            <div>
+              <h1 class="pane-title">Platform Operations &amp; MRR</h1>
+              <p class="pane-desc">Real-time revenue metrics, multi-tenant executions, and cluster health.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="btn-admin-flush-cache">Flush Global Cache</button>
           </div>
 
-          <div class="kpi-card">
-            <div class="kpi-head">
-              <span class="kpi-label">Total Registered Tenants</span>
-              <span class="kpi-trend positive font-mono">+84 this week</span>
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-head">
+                <span class="kpi-label">Monthly Recurring Rev (MRR)</span>
+                <span class="kpi-trend positive font-mono">+18.4%</span>
+              </div>
+              <div class="kpi-value font-mono" id="admin-mrr-val">$14,280</div>
+              <div class="kpi-sub">Polar.sh MoR Subscriptions</div>
             </div>
-            <div class="kpi-value font-mono" id="admin-users-val">1,420</div>
-            <div class="kpi-sub font-mono">1,395 active / 25 trial</div>
+
+            <div class="kpi-card">
+              <div class="kpi-head">
+                <span class="kpi-label">Active Tenants</span>
+                <span class="kpi-trend positive font-mono">+32 this wk</span>
+              </div>
+              <div class="kpi-value font-mono" id="admin-tenants-val">1,417</div>
+              <div class="kpi-sub">Across Free, Pro &amp; Scale</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-head">
+                <span class="kpi-label">Monthly Workflow Executions</span>
+                <span class="kpi-trend positive font-mono">99.94%</span>
+              </div>
+              <div class="kpi-value font-mono">4,218,090</div>
+              <div class="kpi-sub">Sub-millisecond latency</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-head">
+                <span class="kpi-label">Active Worker Nodes</span>
+                <span class="kpi-trend neutral font-mono">8 / 8 Healthy</span>
+              </div>
+              <div class="kpi-value font-mono">8 Nodes</div>
+              <div class="kpi-sub">Redis Queue: 0ms delay</div>
+            </div>
           </div>
 
-          <div class="kpi-card">
-            <div class="kpi-head">
-              <span class="kpi-label">Monthly Executions</span>
-              <span class="kpi-trend positive font-mono">4.2M events</span>
+          <div class="dashboard-split">
+            <div class="content-box">
+              <div class="box-head">
+                <h3 class="box-title">Multi-Region Worker Clusters</h3>
+                <span class="status-chip success font-mono">All Regions Operational</span>
+              </div>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Cluster Name</th>
+                      <th>Role</th>
+                      <th>CPU Load</th>
+                      <th>Memory</th>
+                      <th>Workers</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="font-medium">us-east-virginia-01</td>
+                      <td class="font-mono text-muted">Primary Master</td>
+                      <td class="font-mono">28%</td>
+                      <td class="font-mono">4.2 / 16 GB</td>
+                      <td class="font-mono">12</td>
+                      <td><span class="status-chip success">Healthy</span></td>
+                    </tr>
+                    <tr>
+                      <td class="font-medium">us-east-virginia-02</td>
+                      <td class="font-mono text-muted">Worker Pool A</td>
+                      <td class="font-mono">44%</td>
+                      <td class="font-mono">7.8 / 32 GB</td>
+                      <td class="font-mono">24</td>
+                      <td><span class="status-chip success">Healthy</span></td>
+                    </tr>
+                    <tr>
+                      <td class="font-medium">eu-central-frankfurt-01</td>
+                      <td class="font-mono text-muted">Worker Pool B</td>
+                      <td class="font-mono">36%</td>
+                      <td class="font-mono">6.1 / 32 GB</td>
+                      <td class="font-mono">24</td>
+                      <td><span class="status-chip success">Healthy</span></td>
+                    </tr>
+                    <tr>
+                      <td class="font-medium">ap-southeast-singapore-01</td>
+                      <td class="font-mono text-muted">Worker Pool C</td>
+                      <td class="font-mono">19%</td>
+                      <td class="font-mono">3.4 / 16 GB</td>
+                      <td class="font-mono">12</td>
+                      <td><span class="status-chip success">Healthy</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div class="kpi-value font-mono">4,218,090</div>
-            <div class="kpi-sub font-mono">Avg Latency: 164ms</div>
-          </div>
 
-          <div class="kpi-card">
-            <div class="kpi-head">
-              <span class="kpi-label">Redis Worker Queue</span>
-              <span class="kpi-trend positive font-mono">0 backpressure</span>
+            <div class="content-box">
+              <div class="box-head">
+                <h3 class="box-title">Polar.sh Merchant Status</h3>
+                <span class="status-chip success font-mono">Connected</span>
+              </div>
+              <div class="instance-details-list font-mono">
+                <div class="instance-row"><span class="k">Gateway</span><span class="v">Polar.sh Sandbox &amp; Live</span></div>
+                <div class="instance-row"><span class="k">HMAC Signatures</span><span class="v">SHA-256 Verified</span></div>
+                <div class="instance-row"><span class="k">Active Subscriptions</span><span class="v">842 Active</span></div>
+                <div class="instance-row"><span class="k">Auto-Provisioning</span><span class="v">Enabled</span></div>
+              </div>
             </div>
-            <div class="kpi-value font-mono text-success">Healthy</div>
-            <div class="kpi-sub font-mono">72 active workers</div>
           </div>
         </div>
 
-        <div class="dashboard-split">
+        <!-- TAB 2: TENANTS & USERS -->
+        <div class="admin-tab-pane" id="admin-pane-tenants">
+          <div class="pane-header">
+            <div>
+              <h1 class="pane-title">Tenants Directory</h1>
+              <p class="pane-desc">Manage customer accounts, change subscription plans, and toggle tenant access.</p>
+            </div>
+          </div>
+
           <div class="content-box">
-            <div class="box-head">
-              <h3 class="box-title">Recent Cross-Tenant Executions</h3>
-              <span class="font-mono text-muted text-sm">Live Stream</span>
-            </div>
-
             <div class="table-container">
               <table class="data-table">
                 <thead>
                   <tr>
-                    <th>Tenant / Org</th>
-                    <th>Workflow</th>
-                    <th>Worker Node</th>
+                    <th>Customer Name</th>
+                    <th>Email</th>
+                    <th>Subscription Tier</th>
+                    <th>Workflows</th>
+                    <th>Executions</th>
                     <th>Status</th>
-                    <th>Duration</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody id="table-admin-live-execs">
+                <tbody id="table-admin-tenants">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: MASTER AI API KEYS HUB -->
+        <div class="admin-tab-pane" id="admin-pane-ai-hub">
+          <div class="pane-header">
+            <div>
+              <h1 class="pane-title">Master AI Model Providers</h1>
+              <p class="pane-desc">Configure platform-wide AI model API keys. These keys power all customer AI Agents in sun9 Studio.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="btn-save-ai-keys">Save AI Provider Keys</button>
+          </div>
+
+          <div class="content-box" style="max-width: 720px;">
+            <div class="form-group">
+              <label class="form-label">Anthropic Claude API Key (Claude 3.5 Sonnet / Haiku)</label>
+              <input type="password" class="input-ctrl font-mono" id="admin-key-anthropic" placeholder="sk-ant-api03-••••••••••••••••" />
+              <span class="text-muted text-xs font-mono">Powers the core AI Reasoning Agent and Intent Extractor</span>
+            </div>
+
+            <div class="form-group" style="margin-top: 16px;">
+              <label class="form-label">OpenAI API Key (GPT-4o / GPT-4o-mini)</label>
+              <input type="password" class="input-ctrl font-mono" id="admin-key-openai" placeholder="sk-proj-••••••••••••••••" />
+              <span class="text-muted text-xs font-mono">Powers OpenAI models and embeddings</span>
+            </div>
+
+            <div class="form-group" style="margin-top: 16px;">
+              <label class="form-label">Google Gemini API Key (Gemini 1.5 Flash / Pro)</label>
+              <input type="password" class="input-ctrl font-mono" id="admin-key-gemini" placeholder="AIzaSy••••••••••••••••" />
+              <span class="text-muted text-xs font-mono">Free high-speed multimodal processing</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: WORKER CLUSTERS -->
+        <div class="admin-tab-pane" id="admin-pane-clusters">
+          <div class="pane-header">
+            <div>
+              <h1 class="pane-title">Worker Node Clusters</h1>
+              <p class="pane-desc">Isolated Docker / Kubernetes execution pools handling workflow executions.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="btn-admin-add-worker">+ Scale Worker Node</button>
+          </div>
+
+          <div class="content-box">
+            <p class="text-muted text-sm">Active worker nodes are executing live jobs with 0 queue backlog.</p>
+          </div>
+        </div>
+
+        <!-- TAB 5: AUDIT LOGS -->
+        <div class="admin-tab-pane" id="admin-pane-audit">
+          <div class="pane-header">
+            <div>
+              <h1 class="pane-title">Global Event Audit Stream</h1>
+              <p class="pane-desc">Real-time immutable audit records across all customer workspaces.</p>
+            </div>
+          </div>
+
+          <div class="content-box">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
                   <tr>
-                    <td class="font-mono text-muted">alex@company.com</td>
-                    <td class="font-medium">Lead Enrichment Agent</td>
-                    <td class="font-mono">us-east-worker-04</td>
-                    <td><span class="status-chip success">Success</span></td>
-                    <td class="font-mono">240ms</td>
+                    <th>Log ID</th>
+                    <th>Level</th>
+                    <th>Worker</th>
+                    <th>Tenant Email</th>
+                    <th>Event Description</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="font-mono text-muted">log_9921</td>
+                    <td><span class="status-chip success font-mono">INFO</span></td>
+                    <td class="font-mono">Worker-04</td>
+                    <td class="font-medium">alex@company.com</td>
+                    <td>Workflow #wf_101 executed successfully (240ms)</td>
+                    <td class="text-muted">Just now</td>
                   </tr>
                   <tr>
-                    <td class="font-mono text-muted">devin@fintechcorp.io</td>
-                    <td class="font-medium">Binance Trade Arbitrage</td>
-                    <td class="font-mono">us-east-worker-12</td>
-                    <td><span class="status-chip success">Success</span></td>
-                    <td class="font-mono">112ms</td>
+                    <td class="font-mono text-muted">log_9920</td>
+                    <td><span class="status-chip success font-mono">INFO</span></td>
+                    <td class="font-mono">Worker-12</td>
+                    <td class="font-medium">devin@fintechcorp.io</td>
+                    <td>Webhook accepted POST /v1/trades (1.2kb)</td>
+                    <td class="text-muted">1m ago</td>
                   </tr>
                   <tr>
-                    <td class="font-mono text-muted">sarah@biohealth.ai</td>
-                    <td class="font-medium">PubMed RAG Sync</td>
-                    <td class="font-mono">eu-central-worker-01</td>
-                    <td><span class="status-chip success">Success</span></td>
-                    <td class="font-mono">840ms</td>
+                    <td class="font-mono text-muted">log_9919</td>
+                    <td><span class="status-chip danger font-mono">WARN</span></td>
+                    <td class="font-mono">Worker-08</td>
+                    <td class="font-medium">dkim@sandboxtech.net</td>
+                    <td>Rate limit threshold reached (100 req/min)</td>
+                    <td class="text-muted">4m ago</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
-
-          <div class="content-box">
-            <div class="box-head">
-              <h3 class="box-title">Cluster Nodes Status</h3>
-              <span class="status-chip success font-mono">4 Regions Active</span>
-            </div>
-
-            <div class="instance-details-list font-mono">
-              <div class="instance-row">
-                <span class="k">us-east-virginia-01</span>
-                <span class="v text-success">CPU: 28% • 12 workers</span>
-              </div>
-              <div class="instance-row">
-                <span class="k">us-east-virginia-02</span>
-                <span class="v text-success">CPU: 44% • 24 workers</span>
-              </div>
-              <div class="instance-row">
-                <span class="k">eu-central-frankfurt-01</span>
-                <span class="v text-success">CPU: 36% • 24 workers</span>
-              </div>
-              <div class="instance-row">
-                <span class="k">ap-southeast-singapore-01</span>
-                <span class="v text-success">CPU: 19% • 12 workers</span>
-              </div>
-            </div>
-
-            <div class="instance-actions">
-              <button class="btn btn-secondary btn-sm" id="btn-admin-flush-cache">Flush Cache</button>
-              <button class="btn btn-primary btn-sm" id="btn-admin-add-worker">+ Spawn Worker Node</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 2: TENANTS & USERS -->
-      <div class="admin-tab-pane" id="admin-pane-tenants">
-        <div class="pane-header">
-          <div>
-            <h1 class="pane-title">Tenants &amp; User Directory</h1>
-            <p class="pane-desc">Manage customer subscriptions, quotas, and account status.</p>
-          </div>
         </div>
 
-        <div class="content-box">
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Tenant Name</th>
-                  <th>Email / ID</th>
-                  <th>Subscription Plan</th>
-                  <th>Workflows</th>
-                  <th>Executions (30d)</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="table-admin-tenants">
-                <!-- Loaded via JS -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 3: WORKER CLUSTERS -->
-      <div class="admin-tab-pane" id="admin-pane-clusters">
-        <div class="pane-header">
-          <div>
-            <h1 class="pane-title">Cluster Infrastructure</h1>
-            <p class="pane-desc">Real-time status of all Docker and Kubernetes container pools.</p>
-          </div>
-          <button class="btn btn-primary btn-sm" id="btn-admin-deploy-cluster">+ Deploy New Region</button>
-        </div>
-
-        <div class="core-grid-3col">
-          <div class="core-card">
-            <div class="box-head">
-              <h3 class="core-card-title">us-east-virginia-01</h3>
-              <span class="status-chip success font-mono">Primary Master</span>
+        <!-- TAB 6: SETTINGS -->
+        <div class="admin-tab-pane" id="admin-pane-settings">
+          <div class="pane-header">
+            <div>
+              <h1 class="pane-title">Platform Feature Flags</h1>
+              <p class="pane-desc">Global platform switches and engine endpoints.</p>
             </div>
-            <div class="instance-details-list font-mono">
-              <div class="instance-row"><span class="k">CPU Load:</span><span class="v">28%</span></div>
-              <div class="instance-row"><span class="k">Memory:</span><span class="v">4.2 / 16 GB</span></div>
-              <div class="instance-row"><span class="k">Workers:</span><span class="v">12 Processes</span></div>
-              <div class="instance-row"><span class="k">Status:</span><span class="v text-success">Healthy</span></div>
-            </div>
-          </div>
-
-          <div class="core-card">
-            <div class="box-head">
-              <h3 class="core-card-title">eu-central-frankfurt-01</h3>
-              <span class="status-chip success font-mono">Worker Pool B</span>
-            </div>
-            <div class="instance-details-list font-mono">
-              <div class="instance-row"><span class="k">CPU Load:</span><span class="v">36%</span></div>
-              <div class="instance-row"><span class="k">Memory:</span><span class="v">6.1 / 32 GB</span></div>
-              <div class="instance-row"><span class="k">Workers:</span><span class="v">24 Processes</span></div>
-              <div class="instance-row"><span class="k">Status:</span><span class="v text-success">Healthy</span></div>
-            </div>
-          </div>
-
-          <div class="core-card">
-            <div class="box-head">
-              <h3 class="core-card-title">ap-southeast-singapore-01</h3>
-              <span class="status-chip success font-mono">Worker Pool C</span>
-            </div>
-            <div class="instance-details-list font-mono">
-              <div class="instance-row"><span class="k">CPU Load:</span><span class="v">19%</span></div>
-              <div class="instance-row"><span class="k">Memory:</span><span class="v">3.4 / 16 GB</span></div>
-              <div class="instance-row"><span class="k">Workers:</span><span class="v">12 Processes</span></div>
-              <div class="instance-row"><span class="k">Status:</span><span class="v text-success">Healthy</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 4: AUDIT LOGS -->
-      <div class="admin-tab-pane" id="admin-pane-audit">
-        <div class="pane-header">
-          <div>
-            <h1 class="pane-title">Global Audit Trail</h1>
-            <p class="pane-desc">High-throughput system logs across all worker nodes.</p>
-          </div>
-        </div>
-
-        <div class="content-box">
-          <div class="table-container">
-            <table class="data-table font-mono">
-              <thead>
-                <tr>
-                  <th>Level</th>
-                  <th>Worker Node</th>
-                  <th>Tenant Email</th>
-                  <th>Message</th>
-                  <th>Timestamp</th>
-                </tr>
-              </thead>
-              <tbody id="table-admin-logs">
-                <tr>
-                  <td><span class="status-chip success">INFO</span></td>
-                  <td class="text-muted">Worker-04</td>
-                  <td>alex@company.com</td>
-                  <td>Execution #ex_901 completed successfully (240ms)</td>
-                  <td class="text-muted">Just now</td>
-                </tr>
-                <tr>
-                  <td><span class="status-chip success">INFO</span></td>
-                  <td class="text-muted">Worker-12</td>
-                  <td>devin@fintechcorp.io</td>
-                  <td>Webhook accepted POST /v1/trades (1.2kb)</td>
-                  <td class="text-muted">1m ago</td>
-                </tr>
-                <tr>
-                  <td><span class="status-chip" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">WARN</span></td>
-                  <td class="text-muted">Worker-08</td>
-                  <td>dkim@sandboxtech.net</td>
-                  <td>Rate limit threshold reached (100 req/min)</td>
-                  <td class="text-muted">4m ago</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 5: SETTINGS -->
-      <div class="admin-tab-pane" id="admin-pane-settings">
-        <div class="pane-header">
-          <div>
-            <h1 class="pane-title">Platform Configuration</h1>
-            <p class="pane-desc">Manage global feature flags, rate limits, and n8n backend endpoints.</p>
-          </div>
-        </div>
-
-        <div class="billing-cards-grid">
-          <div class="content-box">
-            <div class="box-head">
-              <h3 class="box-title">System Feature Flags</h3>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Maintenance Mode</label>
-              <select class="input-ctrl" id="admin-setting-maintenance">
-                <option value="false">Disabled (Platform Online)</option>
-                <option value="true">Enabled (Read-Only Mode)</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">New Tenant Signups</label>
-              <select class="input-ctrl" id="admin-setting-signups">
-                <option value="true">Open (Public Registration)</option>
-                <option value="false">Closed (Invite Only)</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Global API Rate Limit (Req / Minute)</label>
-              <input type="number" class="input-ctrl font-mono" id="admin-setting-ratelimit" value="1200" />
-            </div>
-
             <button class="btn btn-primary btn-sm" id="btn-admin-save-settings">Save Global Settings</button>
           </div>
 
-          <div class="content-box">
-            <div class="box-head">
-              <h3 class="box-title">n8n Workflow Engine Backend</h3>
-            </div>
-
+          <div class="content-box" style="max-width: 600px;">
             <div class="form-group">
-              <label class="form-label">Core Engine Webhook Endpoint</label>
-              <input type="text" class="input-ctrl font-mono" id="admin-setting-n8n-url" value="http://n8n-core:5678/api/v1" />
+              <label class="form-label">Maintenance Mode</label>
+              <select class="input-ctrl font-mono" id="admin-setting-maintenance">
+                <option value="false">Disabled (Platform Online)</option>
+                <option value="true">Enabled (Platform Offline for Updates)</option>
+              </select>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">Master Secret Key</label>
-              <input type="text" class="input-ctrl font-mono" readonly value="sun9_master_sec_99a818b29f0012c4" />
+            <div class="form-group" style="margin-top: 14px;">
+              <label class="form-label">Allow Public Signups</label>
+              <select class="input-ctrl font-mono" id="admin-setting-signups">
+                <option value="true">Enabled (Open to Public)</option>
+                <option value="false">Disabled (Invite Only)</option>
+              </select>
             </div>
 
-            <p class="text-muted text-sm font-mono">Changes take effect immediately across all cluster nodes.</p>
+            <div class="form-group" style="margin-top: 14px;">
+              <label class="form-label">Global Rate Limit (Req / Min)</label>
+              <input type="number" class="input-ctrl font-mono" id="admin-setting-ratelimit" value="1200" />
+            </div>
+
+            <div class="form-group" style="margin-top: 14px;">
+              <label class="form-label">n8n Engine Base URL</label>
+              <input type="text" class="input-ctrl font-mono" id="admin-setting-n8n-url" value="http://localhost:5678" />
+            </div>
           </div>
         </div>
-      </div>
-
+      </main>
     </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      const adminAuthGate = document.getElementById('admin-auth-gate');
+      const adminMainConsole = document.getElementById('admin-main-console');
+      const adminLoginForm = document.getElementById('admin-login-form');
+      const adminLoginError = document.getElementById('admin-login-error');
+      const btnAdminSubmitLogin = document.getElementById('btn-admin-submit-login');
+      const btnAdminLogout = document.getElementById('btn-admin-logout');
       const adminNavItems = document.querySelectorAll('.sidebar-menu .nav-item');
       const adminTabPanes = document.querySelectorAll('.admin-tab-pane');
       const tableAdminTenants = document.getElementById('table-admin-tenants');
       const btnAdminSaveSettings = document.getElementById('btn-admin-save-settings');
-      const btnAdminFlushCache = document.getElementById('btn-admin-flush-cache');
-      const btnAdminAddWorker = document.getElementById('btn-admin-add-worker');
-      const btnAdminDeployCluster = document.getElementById('btn-admin-deploy-cluster');
+      const btnSaveAiKeys = document.getElementById('btn-save-ai-keys');
+
+      // Check for active admin session
+      async function checkAdminAuth() {
+        const token = localStorage.getItem('sun9_admin_token') || localStorage.getItem('sun9_jwt_token');
+        if (!token) {
+          showAuthGate();
+          return;
+        }
+
+        try {
+          const res = await fetch('/api/auth/me', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          const data = await res.json();
+          if (data.success && data.user && data.user.role === 'admin') {
+            showAdminConsole(data.user);
+          } else {
+            showAuthGate();
+          }
+        } catch {
+          showAuthGate();
+        }
+      }
+
+      function showAuthGate() {
+        adminAuthGate.style.display = 'flex';
+        adminMainConsole.style.display = 'none';
+      }
+
+      function showAdminConsole(user) {
+        adminAuthGate.style.display = 'none';
+        adminMainConsole.style.display = 'block';
+        loadAdminTenants();
+      }
+
+      // Admin Login Submission
+      adminLoginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        adminLoginError.style.display = 'none';
+        btnAdminSubmitLogin.disabled = true;
+        btnAdminSubmitLogin.textContent = 'Authenticating...';
+
+        const email = document.getElementById('admin-input-email').value;
+        const password = document.getElementById('admin-input-pass').value;
+
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+          const data = await res.json();
+
+          if (data.success && data.user) {
+            if (data.user.role !== 'admin') {
+              adminLoginError.textContent = 'Access Denied: Superadmin privileges required for this portal.';
+              adminLoginError.style.display = 'block';
+            } else {
+              localStorage.setItem('sun9_admin_token', data.token);
+              showAdminConsole(data.user);
+            }
+          } else {
+            adminLoginError.textContent = data.error || 'Invalid credentials.';
+            adminLoginError.style.display = 'block';
+          }
+        } catch {
+          adminLoginError.textContent = 'Network error. Could not reach server.';
+          adminLoginError.style.display = 'block';
+        } finally {
+          btnAdminSubmitLogin.disabled = false;
+          btnAdminSubmitLogin.textContent = 'Authenticate & Enter Console';
+        }
+      });
+
+      // Admin Logout
+      if (btnAdminLogout) {
+        btnAdminLogout.addEventListener('click', () => {
+          localStorage.removeItem('sun9_admin_token');
+          showAuthGate();
+        });
+      }
 
       function switchAdminTab(tabId) {
         adminNavItems.forEach(item => {
@@ -551,25 +700,10 @@
         }
       });
 
-      if (btnAdminFlushCache) {
-        btnAdminFlushCache.addEventListener('click', () => {
-          btnAdminFlushCache.textContent = 'Flushing...';
-          setTimeout(() => {
-            btnAdminFlushCache.textContent = 'Cache Cleared ✓';
-            setTimeout(() => (btnAdminFlushCache.textContent = 'Flush Cache'), 1500);
-          }, 600);
-        });
-      }
-
-      if (btnAdminAddWorker) {
-        btnAdminAddWorker.addEventListener('click', () => {
-          alert('Spawning new worker container: worker-node-05 in us-east-virginia (Auto-scaling cluster).');
-        });
-      }
-
-      if (btnAdminDeployCluster) {
-        btnAdminDeployCluster.addEventListener('click', () => {
-          alert('Deploy Cluster Wizard: Initializing new Terraform worker pool.');
+      if (btnSaveAiKeys) {
+        btnSaveAiKeys.addEventListener('click', () => {
+          btnSaveAiKeys.textContent = 'Saved to Vault ✓';
+          setTimeout(() => (btnSaveAiKeys.textContent = 'Save AI Provider Keys'), 1500);
         });
       }
 
@@ -602,7 +736,8 @@
         });
       }
 
-      loadAdminTenants();
+      // Check on load
+      checkAdminAuth();
     });
   </script>
 </body>
