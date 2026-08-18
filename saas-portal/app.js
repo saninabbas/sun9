@@ -459,6 +459,236 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================================================================
+  // WORKFLOWS DIRECTORY & TEMPLATES
+  // =========================================================================
+  const tableUserWorkflowsList = document.getElementById('table-user-workflows-list');
+  const btnWfCreateNew = document.getElementById('btn-wf-create-new');
+  const templateCards = document.querySelectorAll('.wf-template-card');
+
+  let userWorkflows = [
+    {
+      id: 'wf_101',
+      name: 'AI Lead Intelligence Pipeline',
+      trigger: 'Webhook / POST',
+      nodesCount: 4,
+      status: 'Active',
+      lastExecuted: '2m ago',
+      definition: {
+        nodes: [
+          { id: 'node_1', type: 'webhook', name: 'Webhook Intake', x: 40, y: 120, parameters: { path: 'incoming-leads', httpMethod: 'POST' }, status: 'READY' },
+          { id: 'node_2', type: 'ai_agent', name: 'Claude 3.5 Sonnet', x: 260, y: 80, parameters: { model: 'claude-3-5-sonnet', prompt: 'Extract enterprise score (1-100) & lead intent.' }, status: 'READY' },
+          { id: 'node_3', type: 'condition', name: 'Score Filter', x: 480, y: 120, parameters: { value1: '={{ $json.score }}', operation: 'greaterThan', threshold: 80 }, status: 'READY' },
+          { id: 'node_4', type: 'database', name: 'PostgreSQL Upsert', x: 700, y: 120, parameters: { query: 'INSERT INTO leads (domain, score) VALUES ($1, $2);' }, status: 'READY' }
+        ],
+        connections: [
+          { id: 'conn_1', source: 'node_1', target: 'node_2' },
+          { id: 'conn_2', source: 'node_2', target: 'node_3' },
+          { id: 'conn_3', source: 'node_3', target: 'node_4' }
+        ]
+      }
+    },
+    {
+      id: 'wf_102',
+      name: 'Customer Support Auto-Responder',
+      trigger: 'Email Trigger',
+      nodesCount: 3,
+      status: 'Active',
+      lastExecuted: '18m ago',
+      definition: {
+        nodes: [
+          { id: 'node_1', type: 'email', name: 'Support Inbox', x: 60, y: 120, parameters: { toEmail: 'support@sun9.io' }, status: 'READY' },
+          { id: 'node_2', type: 'ai_agent', name: 'Gemini 1.5 Pro', x: 300, y: 120, parameters: { model: 'gemini-1.5-pro', prompt: 'Draft polite resolution step for customer ticket.' }, status: 'READY' },
+          { id: 'node_3', type: 'database', name: 'Tickets Audit DB', x: 560, y: 120, parameters: { query: 'UPDATE tickets SET draft = $1;' }, status: 'READY' }
+        ],
+        connections: [
+          { id: 'conn_1', source: 'node_1', target: 'node_2' },
+          { id: 'conn_2', source: 'node_2', target: 'node_3' }
+        ]
+      }
+    },
+    {
+      id: 'wf_103',
+      name: 'Stripe Invoice Router',
+      trigger: 'Webhook / Stripe',
+      nodesCount: 3,
+      status: 'Active',
+      lastExecuted: '1h ago',
+      definition: {
+        nodes: [
+          { id: 'node_1', type: 'webhook', name: 'Stripe Hook', x: 60, y: 120, parameters: { path: 'stripe-events' }, status: 'READY' },
+          { id: 'node_2', type: 'condition', name: 'Amount > $100', x: 300, y: 120, parameters: { operation: 'greaterThan', threshold: 100 }, status: 'READY' },
+          { id: 'node_3', type: 'slack', name: 'Slack VIP Deals', x: 560, y: 120, parameters: { channel: '#vip-deals' }, status: 'READY' }
+        ],
+        connections: [
+          { id: 'conn_1', source: 'node_1', target: 'node_2' },
+          { id: 'conn_2', source: 'node_2', target: 'node_3' }
+        ]
+      }
+    }
+  ];
+
+  function renderUserWorkflowsTable() {
+    if (!tableUserWorkflowsList) return;
+    tableUserWorkflowsList.innerHTML = '';
+
+    userWorkflows.forEach(wf => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="font-medium">${wf.name}</td>
+        <td class="font-mono text-muted">${wf.trigger}</td>
+        <td class="font-mono">${wf.definition.nodes.length} nodes</td>
+        <td><span class="status-chip success font-mono">${wf.status}</span></td>
+        <td class="text-muted">${wf.lastExecuted}</td>
+        <td>
+          <div class="action-btn-group">
+            <button class="btn btn-secondary btn-xs btn-open-wf-studio" data-wf-id="${wf.id}">Open Studio →</button>
+            <button class="btn btn-ghost btn-xs text-danger btn-delete-wf" data-wf-id="${wf.id}">Delete</button>
+          </div>
+        </td>
+      `;
+      tableUserWorkflowsList.appendChild(tr);
+    });
+
+    const chip = document.getElementById('wf-active-count-chip');
+    if (chip) chip.textContent = `${userWorkflows.length} Active`;
+  }
+
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn-open-wf-studio')) {
+      const wfId = e.target.getAttribute('data-wf-id');
+      const found = userWorkflows.find(w => w.id === wfId);
+      if (found) {
+        activeWorkflow = JSON.parse(JSON.stringify({
+          id: found.id,
+          name: found.name,
+          nodes: found.definition.nodes,
+          connections: found.definition.connections
+        }));
+        selectedNodeId = activeWorkflow.nodes[0] ? activeWorkflow.nodes[0].id : null;
+        switchCustomerTab('studio');
+        showToast(`Opened "${found.name}" in Canvas`, 'success');
+      }
+    }
+
+    if (e.target.classList.contains('btn-delete-wf')) {
+      const wfId = e.target.getAttribute('data-wf-id');
+      if (confirm('Delete this workflow from workspace?')) {
+        userWorkflows = userWorkflows.filter(w => w.id !== wfId);
+        renderUserWorkflowsTable();
+        showToast('Workflow deleted', 'success');
+      }
+    }
+  });
+
+  // Template Click Handler
+  templateCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const tmpl = card.getAttribute('data-template');
+      const newId = 'wf_' + Math.random().toString(36).substring(2, 8);
+
+      if (tmpl === 'lead_enrichment') {
+        activeWorkflow = {
+          id: newId,
+          name: 'AI Lead Intelligence Pipeline',
+          nodes: [
+            { id: 'node_1', type: 'webhook', name: 'Webhook Intake', x: 40, y: 120, parameters: { path: 'incoming-leads', httpMethod: 'POST' }, status: 'READY' },
+            { id: 'node_2', type: 'ai_agent', name: 'Claude 3.5 Sonnet', x: 260, y: 80, parameters: { model: 'claude-3-5-sonnet', prompt: 'Extract enterprise score (1-100) & lead intent.' }, status: 'READY' },
+            { id: 'node_3', type: 'condition', name: 'Score Filter', x: 480, y: 120, parameters: { value1: '={{ $json.score }}', operation: 'greaterThan', threshold: 80 }, status: 'READY' },
+            { id: 'node_4', type: 'database', name: 'PostgreSQL Upsert', x: 700, y: 120, parameters: { query: 'INSERT INTO leads VALUES ($1, $2);' }, status: 'READY' }
+          ],
+          connections: [
+            { id: 'conn_1', source: 'node_1', target: 'node_2' },
+            { id: 'conn_2', source: 'node_2', target: 'node_3' },
+            { id: 'conn_3', source: 'node_3', target: 'node_4' }
+          ]
+        };
+      } else if (tmpl === 'support_ai') {
+        activeWorkflow = {
+          id: newId,
+          name: 'Customer Support Auto-Responder',
+          nodes: [
+            { id: 'node_1', type: 'email', name: 'Support Email Intake', x: 60, y: 120, parameters: { toEmail: 'support@sun9.io' }, status: 'READY' },
+            { id: 'node_2', type: 'ai_agent', name: 'Claude 3.5 / Gemini', x: 300, y: 120, parameters: { model: 'claude-3-5-sonnet', prompt: 'Generate resolution answer.' }, status: 'READY' },
+            { id: 'node_3', type: 'database', name: 'PostgreSQL Tickets', x: 560, y: 120, parameters: { query: 'INSERT INTO support_tickets VALUES ($1);' }, status: 'READY' }
+          ],
+          connections: [
+            { id: 'conn_1', source: 'node_1', target: 'node_2' },
+            { id: 'conn_2', source: 'node_2', target: 'node_3' }
+          ]
+        };
+      } else if (tmpl === 'stripe_router') {
+        activeWorkflow = {
+          id: newId,
+          name: 'Stripe Invoice Router',
+          nodes: [
+            { id: 'node_1', type: 'webhook', name: 'Stripe Webhook', x: 60, y: 120, parameters: { path: 'stripe-events' }, status: 'READY' },
+            { id: 'node_2', type: 'condition', name: 'Amount > 100', x: 300, y: 120, parameters: { operation: 'greaterThan', threshold: 100 }, status: 'READY' },
+            { id: 'node_3', type: 'slack', name: 'Slack VIP Deals', x: 560, y: 120, parameters: { channel: '#vip-deals' }, status: 'READY' }
+          ],
+          connections: [
+            { id: 'conn_1', source: 'node_1', target: 'node_2' },
+            { id: 'conn_2', source: 'node_2', target: 'node_3' }
+          ]
+        };
+      } else {
+        activeWorkflow = {
+          id: newId,
+          name: 'Custom Automation Flow',
+          nodes: [
+            { id: 'node_1', type: 'webhook', name: 'Trigger Intake', x: 80, y: 120, parameters: { path: 'start' }, status: 'READY' }
+          ],
+          connections: []
+        };
+      }
+
+      userWorkflows.unshift({
+        id: activeWorkflow.id,
+        name: activeWorkflow.name,
+        trigger: 'Webhook',
+        nodesCount: activeWorkflow.nodes.length,
+        status: 'Active',
+        lastExecuted: 'Just created',
+        definition: {
+          nodes: activeWorkflow.nodes,
+          connections: activeWorkflow.connections
+        }
+      });
+
+      selectedNodeId = activeWorkflow.nodes[0] ? activeWorkflow.nodes[0].id : null;
+      renderUserWorkflowsTable();
+      switchCustomerTab('studio');
+      showToast(`Loaded "${activeWorkflow.name}" Template`, 'success');
+    });
+  });
+
+  if (btnWfCreateNew) {
+    btnWfCreateNew.addEventListener('click', () => {
+      const newId = 'wf_' + Math.random().toString(36).substring(2, 8);
+      activeWorkflow = {
+        id: newId,
+        name: 'New Custom Automation',
+        nodes: [
+          { id: 'node_1', type: 'webhook', name: 'Webhook Intake', x: 80, y: 120, parameters: { path: 'hook' }, status: 'READY' }
+        ],
+        connections: []
+      };
+      selectedNodeId = 'node_1';
+      userWorkflows.unshift({
+        id: activeWorkflow.id,
+        name: activeWorkflow.name,
+        trigger: 'Webhook',
+        nodesCount: 1,
+        status: 'Draft',
+        lastExecuted: 'Just created',
+        definition: { nodes: activeWorkflow.nodes, connections: activeWorkflow.connections }
+      });
+      renderUserWorkflowsTable();
+      switchCustomerTab('studio');
+      showToast('Created new workflow canvas', 'success');
+    });
+  }
+
+  // =========================================================================
   // CUSTOMER DASHBOARD TABS
   // =========================================================================
   function switchCustomerTab(tabId) {
@@ -469,6 +699,9 @@ document.addEventListener('DOMContentLoaded', () => {
     customerTabPanes.forEach(pane => {
       pane.classList.toggle('active', pane.id === `pane-${tabId}`);
     });
+    if (tabId === 'workflows') {
+      renderUserWorkflowsTable();
+    }
     if (tabId === 'studio') {
       setTimeout(() => renderStudioCanvas(), 50);
     }

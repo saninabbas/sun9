@@ -715,13 +715,21 @@ export default async function(items) {
                 <span>Overview</span>
               </button>
 
-              <button class="nav-item" data-tab="studio">
+              <button class="nav-item" data-tab="workflows">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polygon points="12 2 2 7 12 12 22 7 12 2"/>
                   <polyline points="2 17 12 22 22 17"/>
                   <polyline points="2 12 12 17 22 12"/>
                 </svg>
-                <span>Workflow Studio</span>
+                <span>My Automations</span>
+              </button>
+
+              <button class="nav-item" data-tab="studio">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                <span>Workflow Canvas</span>
               </button>
 
               <button class="nav-item" data-tab="executions">
@@ -904,9 +912,88 @@ export default async function(items) {
                 </div>
               </div>
             </div>
+
+          <!-- TAB 2: MY AUTOMATIONS (WORKFLOWS DIRECTORY) -->
+          <div class="tab-pane" id="pane-workflows">
+            <div class="pane-header">
+              <div>
+                <h1 class="pane-title">My Automations</h1>
+                <p class="pane-desc">Build, manage, and monitor your visual workflows and AI agents.</p>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-wf-create-new">
+                <span>+ Create New Workflow</span>
+              </button>
+            </div>
+
+            <!-- Pre-Built Automation Templates -->
+            <div style="margin-bottom: 24px;">
+              <h3 class="font-mono text-xs text-muted" style="letter-spacing:0.05em; margin-bottom: 12px;">START FROM POPULAR TEMPLATES</h3>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;">
+                <div class="content-box wf-template-card" data-template="lead_enrichment" style="cursor:pointer; transition: all 0.2s ease;">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <span style="font-size: 1.25rem;">⚡</span>
+                    <span class="font-medium" style="font-size: 0.9rem; color: var(--text-primary);">AI Lead Intelligence</span>
+                  </div>
+                  <p class="text-muted text-xs">Webhook intake → Claude 3.5 Sonnet analysis → PostgreSQL store → Slack dispatch.</p>
+                  <div class="font-mono text-xs text-accent" style="margin-top: 10px; color: var(--accent-emerald);">Use Template →</div>
+                </div>
+
+                <div class="content-box wf-template-card" data-template="support_ai" style="cursor:pointer; transition: all 0.2s ease;">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <span style="font-size: 1.25rem;">🧠</span>
+                    <span class="font-medium" style="font-size: 0.9rem; color: var(--text-primary);">Customer Support Auto-Responder</span>
+                  </div>
+                  <p class="text-muted text-xs">Email hook → Gemini 1.5 Pro resolution draft → Postgres DB audit log.</p>
+                  <div class="font-mono text-xs text-accent" style="margin-top: 10px; color: var(--accent-purple);">Use Template →</div>
+                </div>
+
+                <div class="content-box wf-template-card" data-template="stripe_router" style="cursor:pointer; transition: all 0.2s ease;">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <span style="font-size: 1.25rem;">💳</span>
+                    <span class="font-medium" style="font-size: 0.9rem; color: var(--text-primary);">Stripe Invoice Router</span>
+                  </div>
+                  <p class="text-muted text-xs">Payment webhook → Condition branch → Email receipt &amp; accounting webhook.</p>
+                  <div class="font-mono text-xs text-accent" style="margin-top: 10px; color: var(--accent-blue);">Use Template →</div>
+                </div>
+
+                <div class="content-box wf-template-card" data-template="blank" style="cursor:pointer; transition: all 0.2s ease; border-style: dashed;">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <span style="font-size: 1.25rem;">➕</span>
+                    <span class="font-medium" style="font-size: 0.9rem; color: var(--text-primary);">Blank Canvas</span>
+                  </div>
+                  <p class="text-muted text-xs">Start from a clean slate and drag &amp; drop your own custom nodes.</p>
+                  <div class="font-mono text-xs" style="margin-top: 10px; color: var(--text-secondary);">Start Blank Flow →</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Saved Workflows List Table -->
+            <div class="content-box">
+              <div class="box-head">
+                <h3 class="box-title">Active Workflows in Workspace</h3>
+                <span class="status-chip success font-mono" id="wf-active-count-chip">4 Active</span>
+              </div>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Workflow Name</th>
+                      <th>Trigger Type</th>
+                      <th>Nodes</th>
+                      <th>Status</th>
+                      <th>Last Executed</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="table-user-workflows-list">
+                    <!-- Rendered dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
 
-          <!-- TAB 2: WORKFLOW STUDIO -->
+          <!-- TAB 3: WORKFLOW CANVAS STUDIO -->
           <div class="tab-pane" id="pane-studio">
             <div class="studio-ide-shell">
               <div class="ide-header">
