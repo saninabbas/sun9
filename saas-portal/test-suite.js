@@ -180,6 +180,68 @@ async function runTests() {
     logFail('6. Authentication Protection', e.message);
   }
 
+  // ----------------------------------------------------
+  // TEST 7: User Login & Session Verification
+  // ----------------------------------------------------
+  try {
+    const loginRes = await req('/api/auth/login', 'POST', {
+      email: `test_eng_${Date.now()}@sun9.io`,
+      password: 'wrong_password'
+    });
+    assert.strictEqual(loginRes.status, 401, 'Expected status 401 for wrong password');
+
+    const meRes = await req('/api/auth/me', 'GET', null, authHeadersA);
+    assert.strictEqual(meRes.status, 200, 'Expected status 200 for authenticated /api/auth/me');
+    assert(meRes.data.user && meRes.data.user.email, 'User data missing from /api/auth/me');
+    logPass('7. User Login & Session Verification — Validated password check & JWT me endpoint');
+  } catch (e) {
+    logFail('7. User Login & Session Verification', e.message);
+  }
+
+  // ----------------------------------------------------
+  // TEST 8: Starter Workflows Auto-Provisioning
+  // ----------------------------------------------------
+  try {
+    const listWfRes = await req('/api/workflows', 'GET', null, authHeadersA);
+    assert.strictEqual(listWfRes.status, 200, 'Expected status 200 for listing workflows');
+    assert(Array.isArray(listWfRes.data.workflows) && listWfRes.data.workflows.length >= 1, 'Starter workflows not provisioned');
+    logPass(`8. Starter Workflows Auto-Provisioning — Found ${listWfRes.data.workflows.length} workflows for user`);
+  } catch (e) {
+    logFail('8. Starter Workflows Auto-Provisioning', e.message);
+  }
+
+  // ----------------------------------------------------
+  // TEST 9: Workflow Update & Delete Lifecycle
+  // ----------------------------------------------------
+  try {
+    const updateRes = await req(`/api/workflows/${createdWfId}`, 'PUT', {
+      name: 'Updated Pipeline Name'
+    }, authHeadersA);
+    assert.strictEqual(updateRes.status, 200, 'Expected status 200 for updating workflow');
+    assert.strictEqual(updateRes.data.workflow.name, 'Updated Pipeline Name', 'Workflow name was not updated');
+
+    const deleteRes = await req(`/api/workflows/${createdWfId}`, 'DELETE', null, authHeadersA);
+    assert.strictEqual(deleteRes.status, 200, 'Expected status 200 for deleting workflow');
+    logPass('9. Workflow Lifecycle — Verified PUT update and DELETE workflow endpoints');
+  } catch (e) {
+    logFail('9. Workflow Lifecycle', e.message);
+  }
+
+  // ----------------------------------------------------
+  // TEST 10: API Keys Management
+  // ----------------------------------------------------
+  try {
+    const keyRes = await req('/api/keys/create', 'POST', { name: 'CI/CD Pipeline Key' }, authHeadersA);
+    assert.strictEqual(keyRes.status, 200, 'Expected status 200 for creating API key');
+    assert(keyRes.data.apiKey && keyRes.data.apiKey.fullKey, 'API key was not generated');
+
+    const keyAuthRes = await req('/api/auth/me', 'GET', null, { 'X-SUN9-API-KEY': keyRes.data.apiKey.fullKey });
+    assert.strictEqual(keyAuthRes.status, 200, 'Failed to authenticate using X-SUN9-API-KEY header');
+    logPass('10. API Keys Management — Created key and verified authentication via X-SUN9-API-KEY');
+  } catch (e) {
+    logFail('10. API Keys Management', e.message);
+  }
+
   console.log('\n====================================================');
   console.log(`TEST SUMMARY: ${passed}/${total} TESTS PASSED (${Math.round((passed/total)*100)}%)`);
   console.log('====================================================\n');

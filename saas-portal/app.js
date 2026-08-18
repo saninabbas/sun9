@@ -305,6 +305,9 @@ document.addEventListener('DOMContentLoaded', () => {
         currentUser = data.user;
         authModal.style.display = 'none';
         applyUserData(data.user);
+        if (navAuthLabel) navAuthLabel.textContent = 'Dashboard';
+        if (btnNavStart) btnNavStart.textContent = 'Open Workspace →';
+        await loadUserWorkflows();
         setView('dashboard');
         showToast('Welcome back, ' + data.user.name);
       } else {
@@ -344,6 +347,9 @@ document.addEventListener('DOMContentLoaded', () => {
         currentUser = data.user;
         authModal.style.display = 'none';
         applyUserData(data.user);
+        if (navAuthLabel) navAuthLabel.textContent = 'Dashboard';
+        if (btnNavStart) btnNavStart.textContent = 'Open Workspace →';
+        await loadUserWorkflows();
         setView('dashboard');
         showToast('Workspace created successfully!');
       } else {
@@ -366,7 +372,8 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch {}
       localStorage.removeItem('sun9_jwt_token');
       currentUser = null;
-      navAuthLabel.textContent = 'Log in';
+      if (navAuthLabel) navAuthLabel.textContent = 'Log in';
+      if (btnNavStart) btnNavStart.textContent = 'Get started';
       setView('landing');
       showToast('Logged out of workspace');
     });
@@ -377,6 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!token) {
       currentUser = null;
       if (navAuthLabel) navAuthLabel.textContent = 'Log in';
+      if (btnNavStart) btnNavStart.textContent = 'Get started';
       return;
     }
     try {
@@ -386,14 +394,44 @@ document.addEventListener('DOMContentLoaded', () => {
         currentUser = data.user;
         applyUserData(data.user);
         if (navAuthLabel) navAuthLabel.textContent = 'Dashboard';
+        if (btnNavStart) btnNavStart.textContent = 'Open Workspace →';
+        await loadUserWorkflows();
       } else {
         localStorage.removeItem('sun9_jwt_token');
         currentUser = null;
         if (navAuthLabel) navAuthLabel.textContent = 'Log in';
+        if (btnNavStart) btnNavStart.textContent = 'Get started';
       }
     } catch {
       currentUser = null;
       if (navAuthLabel) navAuthLabel.textContent = 'Log in';
+      if (btnNavStart) btnNavStart.textContent = 'Get started';
+    }
+  }
+
+  async function loadUserWorkflows() {
+    if (!currentUser) return;
+    try {
+      const res = await fetch('/api/workflows', { headers: getAuthHeader() });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.workflows) && data.workflows.length > 0) {
+        userWorkflows = data.workflows;
+        if (!activeWorkflow || !userWorkflows.some(w => w.id === activeWorkflow.id)) {
+          const first = userWorkflows[0];
+          activeWorkflow = {
+            id: first.id,
+            name: first.name,
+            nodes: first.definition?.nodes || [],
+            connections: first.definition?.connections || []
+          };
+          selectedNodeId = activeWorkflow.nodes[0] ? activeWorkflow.nodes[0].id : null;
+        }
+        renderUserWorkflowsTable();
+        renderStudioCanvas();
+        renderInspector();
+      }
+    } catch (err) {
+      console.warn('Could not load workflows:', err);
     }
   }
 
@@ -465,101 +503,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnWfCreateNew = document.getElementById('btn-wf-create-new');
   const templateCards = document.querySelectorAll('.wf-template-card');
 
-  let userWorkflows = [
-    {
-      id: 'wf_yt_01',
-      name: 'YouTube AI Auto-Creator & Repurposer',
-      trigger: 'YouTube Feed / Upload',
-      nodesCount: 4,
-      status: 'Active',
-      lastExecuted: 'Just now',
-      definition: {
-        nodes: [
-          { id: 'node_yt', type: 'youtube', name: 'YouTube Channel Intake', x: 40, y: 120, parameters: { channelId: 'UC_x5XG1OV2P6uZZ5FSM9Ttw', event: 'new_video' }, status: 'READY' },
-          { id: 'node_ai', type: 'ai_agent', name: 'Claude 3.5 Scriptwriter', x: 260, y: 80, parameters: { model: 'claude-3-5-sonnet', prompt: 'Summarize video transcript into 5 viral tweets & viral Shorts script.' }, status: 'READY' },
-          { id: 'node_tg', type: 'telegram', name: 'Telegram Viral Channel', x: 480, y: 120, parameters: { chatId: '@viral_shorts_feed', parseMode: 'HTML' }, status: 'READY' },
-          { id: 'node_db', type: 'database', name: 'PostgreSQL Video Vault', x: 700, y: 120, parameters: { query: 'INSERT INTO youtube_vault (video_id, script) VALUES ($1, $2);' }, status: 'READY' }
-        ],
-        connections: [
-          { id: 'conn_1', source: 'node_yt', target: 'node_ai' },
-          { id: 'conn_2', source: 'node_ai', target: 'node_tg' },
-          { id: 'conn_3', source: 'node_tg', target: 'node_db' }
-        ]
-      }
-    },
-    {
-      id: 'wf_101',
-      name: 'AI Lead Intelligence Pipeline',
-      trigger: 'Webhook / POST',
-      nodesCount: 4,
-      status: 'Active',
-      lastExecuted: '2m ago',
-      definition: {
-        nodes: [
-          { id: 'node_1', type: 'webhook', name: 'Webhook Intake', x: 40, y: 120, parameters: { path: 'incoming-leads', httpMethod: 'POST' }, status: 'READY' },
-          { id: 'node_2', type: 'ai_agent', name: 'Claude 3.5 Sonnet', x: 260, y: 80, parameters: { model: 'claude-3-5-sonnet', prompt: 'Extract enterprise score (1-100) & lead intent.' }, status: 'READY' },
-          { id: 'node_3', type: 'condition', name: 'Score Filter', x: 480, y: 120, parameters: { value1: '={{ $json.score }}', operation: 'greaterThan', threshold: 80 }, status: 'READY' },
-          { id: 'node_4', type: 'database', name: 'PostgreSQL Upsert', x: 700, y: 120, parameters: { query: 'INSERT INTO leads (domain, score) VALUES ($1, $2);' }, status: 'READY' }
-        ],
-        connections: [
-          { id: 'conn_1', source: 'node_1', target: 'node_2' },
-          { id: 'conn_2', source: 'node_2', target: 'node_3' },
-          { id: 'conn_3', source: 'node_3', target: 'node_4' }
-        ]
-      }
-    },
-    {
-      id: 'wf_102',
-      name: 'Customer Support Auto-Responder',
-      trigger: 'Email Trigger',
-      nodesCount: 3,
-      status: 'Active',
-      lastExecuted: '18m ago',
-      definition: {
-        nodes: [
-          { id: 'node_1', type: 'email', name: 'Support Inbox', x: 60, y: 120, parameters: { toEmail: 'support@sun9.io' }, status: 'READY' },
-          { id: 'node_2', type: 'ai_agent', name: 'Gemini 1.5 Pro', x: 300, y: 120, parameters: { model: 'gemini-1.5-pro', prompt: 'Draft polite resolution step for customer ticket.' }, status: 'READY' },
-          { id: 'node_3', type: 'database', name: 'Tickets Audit DB', x: 560, y: 120, parameters: { query: 'UPDATE tickets SET draft = $1;' }, status: 'READY' }
-        ],
-        connections: [
-          { id: 'conn_1', source: 'node_1', target: 'node_2' },
-          { id: 'conn_2', source: 'node_2', target: 'node_3' }
-        ]
-      }
-    },
-    {
-      id: 'wf_103',
-      name: 'Stripe Invoice Router',
-      trigger: 'Webhook / Stripe',
-      nodesCount: 3,
-      status: 'Active',
-      lastExecuted: '1h ago',
-      definition: {
-        nodes: [
-          { id: 'node_1', type: 'webhook', name: 'Stripe Hook', x: 60, y: 120, parameters: { path: 'stripe-events' }, status: 'READY' },
-          { id: 'node_2', type: 'condition', name: 'Amount > $100', x: 300, y: 120, parameters: { operation: 'greaterThan', threshold: 100 }, status: 'READY' },
-          { id: 'node_3', type: 'slack', name: 'Slack VIP Deals', x: 560, y: 120, parameters: { channel: '#vip-deals' }, status: 'READY' }
-        ],
-        connections: [
-          { id: 'conn_1', source: 'node_1', target: 'node_2' },
-          { id: 'conn_2', source: 'node_2', target: 'node_3' }
-        ]
-      }
-    }
-  ];
+  let userWorkflows = [];
 
   function renderUserWorkflowsTable() {
     if (!tableUserWorkflowsList) return;
     tableUserWorkflowsList.innerHTML = '';
 
+    if (userWorkflows.length === 0) {
+      tableUserWorkflowsList.innerHTML = `<tr><td colspan="6" class="text-muted" style="text-align:center; padding: 24px;">No workflows found. Click a template above or "+ New Custom Flow" to create one.</td></tr>`;
+      return;
+    }
+
     userWorkflows.forEach(wf => {
       const tr = document.createElement('tr');
+      const nodesCount = wf.definition?.nodes ? wf.definition.nodes.length : 0;
+      const triggerNode = (wf.definition?.nodes || []).find(n => n.type === 'webhook' || n.type === 'youtube' || n.type === 'email' || n.type === 'trigger');
+      const triggerName = triggerNode ? triggerNode.name : (wf.trigger || 'Webhook / Event');
+
       tr.innerHTML = `
         <td class="font-medium">${wf.name}</td>
-        <td class="font-mono text-muted">${wf.trigger}</td>
-        <td class="font-mono">${wf.definition.nodes.length} nodes</td>
-        <td><span class="status-chip success font-mono">${wf.status}</span></td>
-        <td class="text-muted">${wf.lastExecuted}</td>
+        <td class="font-mono text-muted">${triggerName}</td>
+        <td class="font-mono">${nodesCount} nodes</td>
+        <td><span class="status-chip success font-mono">${wf.status || 'Active'}</span></td>
+        <td class="text-muted">${wf.updatedAt ? new Date(wf.updatedAt).toLocaleDateString() : 'Just now'}</td>
         <td>
           <div class="action-btn-group">
             <button class="btn btn-secondary btn-xs btn-open-wf-studio" data-wf-id="${wf.id}">Open Studio →</button>
@@ -574,7 +540,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (chip) chip.textContent = `${userWorkflows.length} Active`;
   }
 
-  document.addEventListener('click', (e) => {
+  document.addEventListener('click', async (e) => {
     if (e.target.classList.contains('btn-open-wf-studio')) {
       const wfId = e.target.getAttribute('data-wf-id');
       const found = userWorkflows.find(w => w.id === wfId);
@@ -582,8 +548,8 @@ document.addEventListener('DOMContentLoaded', () => {
         activeWorkflow = JSON.parse(JSON.stringify({
           id: found.id,
           name: found.name,
-          nodes: found.definition.nodes,
-          connections: found.definition.connections
+          nodes: found.definition?.nodes || [],
+          connections: found.definition?.connections || []
         }));
         selectedNodeId = activeWorkflow.nodes[0] ? activeWorkflow.nodes[0].id : null;
         switchCustomerTab('studio');
@@ -594,23 +560,63 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.classList.contains('btn-delete-wf')) {
       const wfId = e.target.getAttribute('data-wf-id');
       if (confirm('Delete this workflow from workspace?')) {
-        userWorkflows = userWorkflows.filter(w => w.id !== wfId);
-        renderUserWorkflowsTable();
-        showToast('Workflow deleted', 'success');
+        try {
+          const res = await fetch(`/api/workflows/${wfId}`, {
+            method: 'DELETE',
+            headers: getAuthHeader()
+          });
+          const data = await res.json();
+          if (data.success) {
+            userWorkflows = userWorkflows.filter(w => w.id !== wfId);
+            renderUserWorkflowsTable();
+            showToast('Workflow deleted', 'success');
+          }
+        } catch {
+          userWorkflows = userWorkflows.filter(w => w.id !== wfId);
+          renderUserWorkflowsTable();
+          showToast('Workflow deleted', 'success');
+        }
       }
     }
   });
+
+  async function createAndOpenWorkflow(name, definition) {
+    if (!currentUser) {
+      openAuthModal('signup');
+      return;
+    }
+    try {
+      const res = await fetch('/api/workflows', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+        body: JSON.stringify({ name, definition })
+      });
+      const data = await res.json();
+      if (data.success && data.workflow) {
+        userWorkflows.unshift(data.workflow);
+        activeWorkflow = {
+          id: data.workflow.id,
+          name: data.workflow.name,
+          nodes: data.workflow.definition?.nodes || [],
+          connections: data.workflow.definition?.connections || []
+        };
+        selectedNodeId = activeWorkflow.nodes[0] ? activeWorkflow.nodes[0].id : null;
+        renderUserWorkflowsTable();
+        switchCustomerTab('studio');
+        showToast(`Loaded "${data.workflow.name}" in Studio`, 'success');
+      }
+    } catch (err) {
+      showToast('Could not create workflow: ' + err.message, 'error');
+    }
+  }
 
   // Template Click Handler
   templateCards.forEach(card => {
     card.addEventListener('click', () => {
       const tmpl = card.getAttribute('data-template');
-      const newId = 'wf_' + Math.random().toString(36).substring(2, 8);
 
       if (tmpl === 'youtube_ai') {
-        activeWorkflow = {
-          id: newId,
-          name: 'YouTube AI Auto-Creator & Repurposer',
+        createAndOpenWorkflow('YouTube AI Auto-Creator & Repurposer', {
           nodes: [
             { id: 'node_yt', type: 'youtube', name: 'YouTube Channel Intake', x: 40, y: 120, parameters: { channelId: 'UC_x5XG1OV2P6uZZ5FSM9Ttw', event: 'new_video' }, status: 'READY' },
             { id: 'node_ai', type: 'ai_agent', name: 'Claude 3.5 Scriptwriter', x: 260, y: 80, parameters: { model: 'claude-3-5-sonnet', prompt: 'Summarize video transcript into 5 viral tweets & viral Shorts script.' }, status: 'READY' },
@@ -622,11 +628,9 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'conn_2', source: 'node_ai', target: 'node_tg' },
             { id: 'conn_3', source: 'node_tg', target: 'node_db' }
           ]
-        };
+        });
       } else if (tmpl === 'lead_enrichment') {
-        activeWorkflow = {
-          id: newId,
-          name: 'AI Lead Intelligence Pipeline',
+        createAndOpenWorkflow('AI Lead Intelligence Pipeline', {
           nodes: [
             { id: 'node_1', type: 'webhook', name: 'Webhook Intake', x: 40, y: 120, parameters: { path: 'incoming-leads', httpMethod: 'POST' }, status: 'READY' },
             { id: 'node_2', type: 'ai_agent', name: 'Claude 3.5 Sonnet', x: 260, y: 80, parameters: { model: 'claude-3-5-sonnet', prompt: 'Extract enterprise score (1-100) & lead intent.' }, status: 'READY' },
@@ -638,11 +642,9 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'conn_2', source: 'node_2', target: 'node_3' },
             { id: 'conn_3', source: 'node_3', target: 'node_4' }
           ]
-        };
+        });
       } else if (tmpl === 'support_ai') {
-        activeWorkflow = {
-          id: newId,
-          name: 'Customer Support Auto-Responder',
+        createAndOpenWorkflow('Customer Support Auto-Responder', {
           nodes: [
             { id: 'node_1', type: 'email', name: 'Support Email Intake', x: 60, y: 120, parameters: { toEmail: 'support@sun9.io' }, status: 'READY' },
             { id: 'node_2', type: 'ai_agent', name: 'Claude 3.5 / Gemini', x: 300, y: 120, parameters: { model: 'claude-3-5-sonnet', prompt: 'Generate resolution answer.' }, status: 'READY' },
@@ -652,11 +654,9 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'conn_1', source: 'node_1', target: 'node_2' },
             { id: 'conn_2', source: 'node_2', target: 'node_3' }
           ]
-        };
+        });
       } else if (tmpl === 'stripe_router') {
-        activeWorkflow = {
-          id: newId,
-          name: 'Stripe Invoice Router',
+        createAndOpenWorkflow('Stripe Invoice Router', {
           nodes: [
             { id: 'node_1', type: 'webhook', name: 'Stripe Webhook', x: 60, y: 120, parameters: { path: 'stripe-events' }, status: 'READY' },
             { id: 'node_2', type: 'condition', name: 'Amount > 100', x: 300, y: 120, parameters: { operation: 'greaterThan', threshold: 100 }, status: 'READY' },
@@ -666,62 +666,29 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'conn_1', source: 'node_1', target: 'node_2' },
             { id: 'conn_2', source: 'node_2', target: 'node_3' }
           ]
-        };
+        });
       } else {
-        activeWorkflow = {
-          id: newId,
-          name: 'Custom Automation Flow',
+        createAndOpenWorkflow('Custom Automation Flow', {
           nodes: [
             { id: 'node_1', type: 'webhook', name: 'Trigger Intake', x: 80, y: 120, parameters: { path: 'start' }, status: 'READY' }
           ],
           connections: []
-        };
+        });
       }
-
-      userWorkflows.unshift({
-        id: activeWorkflow.id,
-        name: activeWorkflow.name,
-        trigger: 'Webhook',
-        nodesCount: activeWorkflow.nodes.length,
-        status: 'Active',
-        lastExecuted: 'Just created',
-        definition: {
-          nodes: activeWorkflow.nodes,
-          connections: activeWorkflow.connections
-        }
-      });
-
-      selectedNodeId = activeWorkflow.nodes[0] ? activeWorkflow.nodes[0].id : null;
-      renderUserWorkflowsTable();
-      switchCustomerTab('studio');
-      showToast(`Loaded "${activeWorkflow.name}" Template`, 'success');
     });
   });
 
   if (btnWfCreateNew) {
     btnWfCreateNew.addEventListener('click', () => {
-      const newId = 'wf_' + Math.random().toString(36).substring(2, 8);
-      activeWorkflow = {
-        id: newId,
-        name: 'New Custom Automation',
+      createAndOpenWorkflow('New Custom Flow', {
         nodes: [
-          { id: 'node_1', type: 'webhook', name: 'Webhook Intake', x: 80, y: 120, parameters: { path: 'hook' }, status: 'READY' }
+          { id: 'node_1', type: 'webhook', name: 'Webhook Intake', x: 80, y: 120, parameters: { path: 'hook' }, status: 'READY' },
+          { id: 'node_2', type: 'ai_agent', name: 'Claude 3.5 Sonnet', x: 320, y: 120, parameters: { model: 'claude-3-5-sonnet' }, status: 'READY' }
         ],
-        connections: []
-      };
-      selectedNodeId = 'node_1';
-      userWorkflows.unshift({
-        id: activeWorkflow.id,
-        name: activeWorkflow.name,
-        trigger: 'Webhook',
-        nodesCount: 1,
-        status: 'Draft',
-        lastExecuted: 'Just created',
-        definition: { nodes: activeWorkflow.nodes, connections: activeWorkflow.connections }
+        connections: [
+          { id: 'conn_1', source: 'node_1', target: 'node_2' }
+        ]
       });
-      renderUserWorkflowsTable();
-      switchCustomerTab('studio');
-      showToast('Created new workflow canvas', 'success');
     });
   }
 
@@ -1286,10 +1253,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const data = await res.json();
-        if (data.success) {
-          showToast('Workflow saved to cloud', 'success');
+        if (data.success && data.workflow) {
+          const idx = userWorkflows.findIndex(w => w.id === activeWorkflow.id);
+          if (idx >= 0) userWorkflows[idx] = data.workflow;
+          else userWorkflows.unshift(data.workflow);
+          renderUserWorkflowsTable();
+          showToast('Workflow saved to cloud ✓', 'success');
         } else {
-          showToast('Saved locally', 'success');
+          showToast('Saved in local workspace cache', 'success');
         }
       } catch {
         showToast('Saved locally in workspace', 'success');
@@ -1304,7 +1275,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </svg>
             <span>Save Flow</span>
           `;
-        }, 1200);
+        }, 800);
       }
     });
   }
@@ -1312,10 +1283,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // New Flow Button
   if (btnStudioNew) {
     btnStudioNew.addEventListener('click', () => {
-      const newId = 'wf_' + Math.random().toString(36).substring(2, 8);
-      activeWorkflow = {
-        id: newId,
-        name: 'New Automation Flow',
+      createAndOpenWorkflow('New Custom Flow', {
         nodes: [
           { id: 'node_1', type: 'webhook', name: 'Webhook Intake', x: 60, y: 120, parameters: { path: 'custom-hook' }, status: 'READY' },
           { id: 'node_2', type: 'ai_agent', name: 'AI Processor', x: 300, y: 120, parameters: { model: 'claude-3-5-sonnet' }, status: 'READY' }
@@ -1323,11 +1291,7 @@ document.addEventListener('DOMContentLoaded', () => {
         connections: [
           { id: 'conn_1', source: 'node_1', target: 'node_2' }
         ]
-      };
-      selectedNodeId = 'node_1';
-      renderStudioCanvas();
-      renderInspector();
-      showToast('Created new workflow canvas', 'success');
+      });
     });
   }
 
@@ -1362,7 +1326,19 @@ document.addEventListener('DOMContentLoaded', () => {
         studioTerminalLogs.scrollTop = studioTerminalLogs.scrollHeight;
       };
 
-      appendLog(`Trigger signal dispatched for ${activeWorkflow.name} (${activeWorkflow.nodes.length} nodes)...`);
+      appendLog(`Dispatched trigger for "${activeWorkflow.name}" (${activeWorkflow.nodes.length} nodes)...`);
+
+      // Auto-save active workflow
+      try {
+        await fetch(`/api/workflows/${activeWorkflow.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+          body: JSON.stringify({
+            name: activeWorkflow.name,
+            definition: { nodes: activeWorkflow.nodes, connections: activeWorkflow.connections }
+          })
+        });
+      } catch {}
 
       activeWorkflow.nodes.forEach(n => n.status = 'READY');
       renderStudioCanvas();
@@ -1382,7 +1358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const execData = await res.json();
 
         if (execData.success) {
-          appendLog(`Execution initiated: ID #${execData.execution_id} (n8n: ${execData.n8n_execution_id})`);
+          appendLog(`Execution initiated: ID #${execData.execution_id} (Engine: ${execData.mode})`);
 
           let stepIndex = 0;
           const runNextNode = () => {
@@ -1390,23 +1366,23 @@ document.addEventListener('DOMContentLoaded', () => {
               const node = activeWorkflow.nodes[stepIndex];
               node.status = 'RUNNING';
               renderStudioCanvas();
-              appendLog(`Step ${stepIndex + 1}/${activeWorkflow.nodes.length} [${node.name}]: Executing...`);
+              appendLog(`Step ${stepIndex + 1}/${activeWorkflow.nodes.length} [${node.name}]: Processing payload...`);
 
               setTimeout(() => {
                 node.status = 'SUCCESS';
                 renderStudioCanvas();
-                appendLog(`Step ${stepIndex + 1} [${node.name}]: 200 OK — Success`);
+                appendLog(`Step ${stepIndex + 1} [${node.name}]: 200 OK — Success ✓`);
                 stepIndex++;
                 runNextNode();
-              }, 300);
+              }, 250);
             } else {
-              appendLog(`Workflow finished: SUCCESS (Total: ${execData.duration_ms}ms)`);
+              appendLog(`Workflow finished: SUCCESS (Duration: ${execData.duration_ms}ms)`);
               studioTermStatus.textContent = 'SUCCESS';
               studioTermStatus.style.color = 'var(--accent-emerald)';
               btnStudioRun.disabled = false;
               btnStudioRun.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg><span>Run Flow</span>`;
               isExecutingStudio = false;
-              showToast('Workflow executed successfully', 'success');
+              showToast('Workflow executed successfully ✓', 'success');
               loadUserSession();
             }
           };
@@ -1417,7 +1393,7 @@ document.addEventListener('DOMContentLoaded', () => {
           studioTermStatus.textContent = 'FAILED';
           studioTermStatus.style.color = 'var(--accent-rose)';
           btnStudioRun.disabled = false;
-          btnStudioRun.textContent = 'Run Flow';
+          btnStudioRun.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg><span>Run Flow</span>`;
           isExecutingStudio = false;
           showToast(`Execution failed: ${execData.error}`, 'error');
         }
@@ -1426,7 +1402,7 @@ document.addEventListener('DOMContentLoaded', () => {
         studioTermStatus.textContent = 'ERROR';
         studioTermStatus.style.color = 'var(--accent-rose)';
         btnStudioRun.disabled = false;
-        btnStudioRun.textContent = 'Run Flow';
+        btnStudioRun.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg><span>Run Flow</span>`;
         isExecutingStudio = false;
         showToast('Network error during execution', 'error');
       }

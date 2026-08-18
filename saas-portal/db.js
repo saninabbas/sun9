@@ -11,6 +11,96 @@ if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
+function getStarterWorkflows(userId) {
+  const ts = new Date().toISOString();
+  return [
+    {
+      id: 'wf_lead_' + Math.random().toString(36).substring(2, 8),
+      userId,
+      name: 'AI Lead Intelligence Pipeline',
+      n8n_workflow_id: 'n8n_wf_101',
+      status: 'active',
+      definition: {
+        nodes: [
+          { id: 'node_1', type: 'webhook', name: 'Webhook Intake', x: 40, y: 120, parameters: { path: 'incoming-leads', httpMethod: 'POST' }, status: 'READY' },
+          { id: 'node_2', type: 'ai_agent', name: 'Claude 3.5 Sonnet', x: 260, y: 80, parameters: { model: 'claude-3-5-sonnet', prompt: 'Extract enterprise score (1-100) & lead intent.' }, status: 'READY' },
+          { id: 'node_3', type: 'condition', name: 'Score Filter', x: 480, y: 120, parameters: { value1: '={{ $json.score }}', operation: 'greaterThan', threshold: 80 }, status: 'READY' },
+          { id: 'node_4', type: 'database', name: 'PostgreSQL Upsert', x: 700, y: 120, parameters: { query: 'INSERT INTO leads (domain, score) VALUES ($1, $2);' }, status: 'READY' }
+        ],
+        connections: [
+          { id: 'conn_1', source: 'node_1', target: 'node_2' },
+          { id: 'conn_2', source: 'node_2', target: 'node_3' },
+          { id: 'conn_3', source: 'node_3', target: 'node_4' }
+        ]
+      },
+      createdAt: ts,
+      updatedAt: ts
+    },
+    {
+      id: 'wf_yt_' + Math.random().toString(36).substring(2, 8),
+      userId,
+      name: 'YouTube AI Auto-Creator & Repurposer',
+      n8n_workflow_id: 'n8n_wf_102',
+      status: 'active',
+      definition: {
+        nodes: [
+          { id: 'node_yt', type: 'youtube', name: 'YouTube Channel Intake', x: 40, y: 120, parameters: { channelId: 'UC_x5XG1OV2P6uZZ5FSM9Ttw', event: 'new_video' }, status: 'READY' },
+          { id: 'node_ai', type: 'ai_agent', name: 'Claude 3.5 Scriptwriter', x: 260, y: 80, parameters: { model: 'claude-3-5-sonnet', prompt: 'Summarize video transcript into 5 viral tweets & viral Shorts script.' }, status: 'READY' },
+          { id: 'node_tg', type: 'telegram', name: 'Telegram Viral Channel', x: 480, y: 120, parameters: { chatId: '@viral_shorts_feed', parseMode: 'HTML' }, status: 'READY' },
+          { id: 'node_db', type: 'database', name: 'PostgreSQL Video Vault', x: 700, y: 120, parameters: { query: 'INSERT INTO youtube_vault (video_id, script) VALUES ($1, $2);' }, status: 'READY' }
+        ],
+        connections: [
+          { id: 'conn_1', source: 'node_yt', target: 'node_ai' },
+          { id: 'conn_2', source: 'node_ai', target: 'node_tg' },
+          { id: 'conn_3', source: 'node_tg', target: 'node_db' }
+        ]
+      },
+      createdAt: ts,
+      updatedAt: ts
+    },
+    {
+      id: 'wf_sup_' + Math.random().toString(36).substring(2, 8),
+      userId,
+      name: 'Customer Support Auto-Responder',
+      n8n_workflow_id: 'n8n_wf_103',
+      status: 'active',
+      definition: {
+        nodes: [
+          { id: 'node_1', type: 'email', name: 'Support Inbox', x: 60, y: 120, parameters: { toEmail: 'support@sun9.io' }, status: 'READY' },
+          { id: 'node_2', type: 'ai_agent', name: 'Gemini 1.5 Pro', x: 300, y: 120, parameters: { model: 'gemini-1.5-pro', prompt: 'Draft polite resolution step for customer ticket.' }, status: 'READY' },
+          { id: 'node_3', type: 'database', name: 'Tickets Audit DB', x: 560, y: 120, parameters: { query: 'UPDATE tickets SET draft = $1;' }, status: 'READY' }
+        ],
+        connections: [
+          { id: 'conn_1', source: 'node_1', target: 'node_2' },
+          { id: 'conn_2', source: 'node_2', target: 'node_3' }
+        ]
+      },
+      createdAt: ts,
+      updatedAt: ts
+    },
+    {
+      id: 'wf_str_' + Math.random().toString(36).substring(2, 8),
+      userId,
+      name: 'Stripe Invoice Router',
+      n8n_workflow_id: 'n8n_wf_104',
+      status: 'active',
+      definition: {
+        nodes: [
+          { id: 'node_1', type: 'webhook', name: 'Stripe Hook', x: 60, y: 120, parameters: { path: 'stripe-events' }, status: 'READY' },
+          { id: 'node_2', type: 'condition', name: 'Amount > $100', x: 300, y: 120, parameters: { operation: 'greaterThan', threshold: 100 }, status: 'READY' },
+          { id: 'node_3', type: 'slack', name: 'Slack VIP Deals', x: 560, y: 120, parameters: { channel: '#vip-deals' }, status: 'READY' }
+        ],
+        connections: [
+          { id: 'conn_1', source: 'node_1', target: 'node_2' },
+          { id: 'conn_2', source: 'node_2', target: 'node_3' }
+        ]
+      },
+      createdAt: ts,
+      updatedAt: ts
+    }
+  ];
+}
+
 // Default initial database state
 const defaultData = {
   users: [
@@ -74,44 +164,15 @@ const defaultData = {
     }
   ],
   workflows: [
-    {
-      id: 'wf_101',
-      userId: 'usr_9x72k',
-      name: 'Lead Enrichment Agent',
-      n8n_workflow_id: 'n8n_wf_101',
-      status: 'active',
-      definition: {
-        nodes: [
-          { id: 'n1', type: 'webhook', name: 'Webhook Intake', parameters: { path: 'incoming-leads' } },
-          { id: 'n2', type: 'ai_agent', name: 'Claude 3.5 Sonnet', parameters: { model: 'claude-3-5-sonnet' } },
-          { id: 'n3', type: 'condition', name: 'Score Filter', parameters: { operation: 'greaterThan' } },
-          { id: 'n4', type: 'database', name: 'PostgreSQL Upsert', parameters: { query: 'INSERT INTO leads VALUES ($1)' } }
-        ]
-      },
-      createdAt: '2026-08-10T14:00:00.000Z',
-      updatedAt: '2026-08-18T12:00:00.000Z'
-    },
-    {
-      id: 'wf_102',
-      userId: 'usr_9x72k',
-      name: 'Stripe Invoice Router',
-      n8n_workflow_id: 'n8n_wf_102',
-      status: 'active',
-      definition: {
-        nodes: [
-          { id: 'n1', type: 'webhook', name: 'Stripe Hook', parameters: {} },
-          { id: 'n2', type: 'slack', name: 'Slack Alert', parameters: {} }
-        ]
-      },
-      createdAt: '2026-08-12T11:00:00.000Z',
-      updatedAt: '2026-08-18T12:00:00.000Z'
-    }
+    ...getStarterWorkflows('usr_9x72k'),
+    ...getStarterWorkflows('usr_8b31a'),
+    ...getStarterWorkflows('usr_admin_root')
   ],
   workflowExecutions: [
     {
       id: 'exec_8421',
       workflowId: 'wf_101',
-      workflowName: 'Lead Enrichment Agent',
+      workflowName: 'AI Lead Intelligence Pipeline',
       userId: 'usr_9x72k',
       n8nExecutionId: '12891',
       status: 'SUCCESS',
@@ -159,7 +220,13 @@ function loadData() {
     if (fs.existsSync(DB_FILE)) {
       const raw = fs.readFileSync(DB_FILE, 'utf-8');
       const parsed = JSON.parse(raw);
-      if (!parsed.workflowExecutions) parsed.workflowExecutions = defaultData.workflowExecutions;
+      if (!Array.isArray(parsed.users)) parsed.users = defaultData.users;
+      if (!Array.isArray(parsed.apiKeys)) parsed.apiKeys = defaultData.apiKeys;
+      if (!Array.isArray(parsed.workflows) || parsed.workflows.length === 0) {
+        parsed.workflows = defaultData.workflows;
+      }
+      if (!Array.isArray(parsed.workflowExecutions)) parsed.workflowExecutions = defaultData.workflowExecutions;
+      if (!parsed.settings) parsed.settings = defaultData.settings;
       return parsed;
     }
   } catch (err) {
@@ -323,13 +390,17 @@ async function createUser({ name, email, password, role = 'user', planTier = 'fr
     status: 'Active'
   });
 
+  // Seed default starter workflows for this newly registered user
+  const starters = getStarterWorkflows(newUserId);
+  data.workflows = (data.workflows || []).concat(starters);
+
   saveData(data);
   return newUser;
 }
 
 async function updateUserPlan(userId, planTier) {
   const data = loadData();
-  const user = data.users.find(u => u.id === userId);
+  const user = (data.users || []).find(u => u.id === userId);
   if (!user) throw new Error('User not found');
 
   user.planTier = planTier;
@@ -348,28 +419,29 @@ async function updateUserPlan(userId, planTier) {
 
 async function createWorkflow(userId, workflowData) {
   const data = loadData();
-  const user = data.users.find(u => u.id === userId);
+  const user = (data.users || []).find(u => u.id === userId);
   if (!user) throw new Error('User not found');
 
-  const userWfCount = data.workflows.filter(w => w.userId === userId).length;
-  if (userWfCount >= user.workflowsLimit) {
+  const userWfs = (data.workflows || []).filter(w => w.userId === userId);
+  if (userWfs.length >= (user.workflowsLimit || 10)) {
     const err = new Error(`Workflow limit reached (${user.workflowsLimit} max for ${user.plan}). Please upgrade your subscription.`);
     err.code = 'QUOTA_EXCEEDED';
     throw err;
   }
 
-  const workflowId = 'wf_' + Math.random().toString(36).substring(2, 10);
+  const workflowId = workflowData.id || ('wf_' + Math.random().toString(36).substring(2, 10));
   const newWorkflow = {
     id: workflowId,
     userId,
     name: workflowData.name || 'Untitled Workflow',
     n8n_workflow_id: workflowData.n8n_workflow_id || null,
-    status: 'active',
+    status: workflowData.status || 'active',
     definition: workflowData.definition || { nodes: [], connections: [] },
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
 
+  if (!Array.isArray(data.workflows)) data.workflows = [];
   data.workflows.push(newWorkflow);
   saveData(data);
   return newWorkflow;
@@ -377,18 +449,29 @@ async function createWorkflow(userId, workflowData) {
 
 async function getWorkflowsByUser(userId) {
   const data = loadData();
-  return data.workflows.filter(w => w.userId === userId);
+  let userWfs = (data.workflows || []).filter(w => w.userId === userId);
+  if (userWfs.length === 0) {
+    const starters = getStarterWorkflows(userId);
+    data.workflows = (data.workflows || []).concat(starters);
+    saveData(data);
+    userWfs = starters;
+  }
+  return userWfs;
 }
 
 async function getWorkflowById(userId, workflowId) {
   const data = loadData();
-  return data.workflows.find(w => w.userId === userId && w.id === workflowId) || null;
+  return (data.workflows || []).find(w => w.userId === userId && w.id === workflowId) || null;
 }
 
 async function updateWorkflow(userId, workflowId, updates) {
   const data = loadData();
-  const wf = data.workflows.find(w => w.userId === userId && w.id === workflowId);
-  if (!wf) return null;
+  let wf = (data.workflows || []).find(w => w.userId === userId && w.id === workflowId);
+  
+  if (!wf) {
+    // Auto-create if not existing yet
+    return await createWorkflow(userId, { id: workflowId, ...updates });
+  }
 
   if (updates.name) wf.name = updates.name;
   if (updates.definition) wf.definition = updates.definition;
@@ -402,8 +485,8 @@ async function updateWorkflow(userId, workflowId, updates) {
 
 async function deleteWorkflow(userId, workflowId) {
   const data = loadData();
-  const initialLen = data.workflows.length;
-  data.workflows = data.workflows.filter(w => !(w.userId === userId && w.id === workflowId));
+  const initialLen = (data.workflows || []).length;
+  data.workflows = (data.workflows || []).filter(w => !(w.userId === userId && w.id === workflowId));
   saveData(data);
   return data.workflows.length < initialLen;
 }
@@ -414,7 +497,7 @@ async function deleteWorkflow(userId, workflowId) {
 
 async function checkAndDeductQuota(userId) {
   const data = loadData();
-  const user = data.users.find(u => u.id === userId);
+  const user = (data.users || []).find(u => u.id === userId);
   if (!user) throw new Error('User not found');
 
   const used = user.executionsUsed || 0;
@@ -442,7 +525,7 @@ async function recordExecution(executionData) {
     workflowName: executionData.workflowName || 'Workflow Execution',
     userId: executionData.userId,
     n8nExecutionId: executionData.n8nExecutionId || null,
-    status: executionData.status || 'RUNNING',
+    status: executionData.status || 'SUCCESS',
     startedAt: executionData.startedAt || new Date().toISOString(),
     finishedAt: executionData.finishedAt || null,
     durationMs: executionData.durationMs || 0,
@@ -451,6 +534,7 @@ async function recordExecution(executionData) {
     createdAt: new Date().toISOString()
   };
 
+  if (!Array.isArray(data.workflowExecutions)) data.workflowExecutions = [];
   data.workflowExecutions.unshift(newExec);
   saveData(data);
   return newExec;
@@ -458,7 +542,7 @@ async function recordExecution(executionData) {
 
 async function updateExecution(executionId, updates) {
   const data = loadData();
-  const exec = data.workflowExecutions.find(e => e.id === executionId);
+  const exec = (data.workflowExecutions || []).find(e => e.id === executionId);
   if (!exec) return null;
 
   if (updates.status) exec.status = updates.status;
@@ -474,12 +558,12 @@ async function updateExecution(executionId, updates) {
 
 async function getExecutionById(userId, executionId) {
   const data = loadData();
-  return data.workflowExecutions.find(e => e.userId === userId && e.id === executionId) || null;
+  return (data.workflowExecutions || []).find(e => e.userId === userId && e.id === executionId) || null;
 }
 
 async function getWorkflowExecutions(userId, workflowId) {
   const data = loadData();
-  return data.workflowExecutions.filter(e => e.userId === userId && (!workflowId || e.workflowId === workflowId));
+  return (data.workflowExecutions || []).filter(e => e.userId === userId && (!workflowId || e.workflowId === workflowId));
 }
 
 // =========================================================================
@@ -488,7 +572,7 @@ async function getWorkflowExecutions(userId, workflowId) {
 
 async function getUserApiKeys(userId) {
   const data = loadData();
-  return data.apiKeys.filter(k => k.userId === userId);
+  return (data.apiKeys || []).filter(k => k.userId === userId);
 }
 
 async function createApiKey(userId, name) {
@@ -498,7 +582,7 @@ async function createApiKey(userId, name) {
   const newKey = {
     id: keyId,
     userId,
-    name: name || 'API Key ' + (data.apiKeys.filter(k => k.userId === userId).length + 1),
+    name: name || 'API Key ' + ((data.apiKeys || []).filter(k => k.userId === userId).length + 1),
     prefix: 'sun9_live_',
     masked: '••••••••••••' + hex,
     fullKey: 'sun9_live_' + Math.random().toString(36).substring(2, 18) + hex,
@@ -506,6 +590,7 @@ async function createApiKey(userId, name) {
     lastUsed: 'Never',
     status: 'Active'
   };
+  if (!Array.isArray(data.apiKeys)) data.apiKeys = [];
   data.apiKeys.unshift(newKey);
   saveData(data);
   return newKey;
@@ -513,15 +598,15 @@ async function createApiKey(userId, name) {
 
 async function revokeApiKey(userId, keyId) {
   const data = loadData();
-  data.apiKeys = data.apiKeys.filter(k => !(k.userId === userId && k.id === keyId));
+  data.apiKeys = (data.apiKeys || []).filter(k => !(k.userId === userId && k.id === keyId));
   saveData(data);
   return true;
 }
 
 async function getAllTenants() {
   const data = loadData();
-  return data.users.map(u => {
-    const wfCount = data.workflows.filter(w => w.userId === u.id).length;
+  return (data.users || []).map(u => {
+    const wfCount = (data.workflows || []).filter(w => w.userId === u.id).length;
     const execCount = (u.executionsUsed || 0) + 420;
     return {
       id: u.id,
@@ -540,7 +625,7 @@ async function getAllTenants() {
 
 async function toggleTenantStatus(userId) {
   const data = loadData();
-  const user = data.users.find(u => u.id === userId);
+  const user = (data.users || []).find(u => u.id === userId);
   if (!user) throw new Error('Tenant not found');
   user.status = user.status === 'Active' ? 'Suspended' : 'Active';
   saveData(data);
@@ -549,12 +634,12 @@ async function toggleTenantStatus(userId) {
 
 async function getAdminSettings() {
   const data = loadData();
-  return data.settings;
+  return data.settings || defaultData.settings;
 }
 
 async function updateAdminSettings(updates) {
   const data = loadData();
-  data.settings = { ...data.settings, ...updates };
+  data.settings = { ...(data.settings || defaultData.settings), ...updates };
   saveData(data);
   return data.settings;
 }
@@ -581,5 +666,6 @@ module.exports = {
   getAllTenants,
   toggleTenantStatus,
   getAdminSettings,
-  updateAdminSettings
+  updateAdminSettings,
+  getStarterWorkflows
 };
