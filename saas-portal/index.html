@@ -932,47 +932,60 @@ export default async function(items) {
               </div>
 
               <div class="ide-body">
-                <!-- Left Palette: Draggable Node Library -->
+                <!-- Left Palette: Categorized Draggable Node Library -->
                 <div class="ide-library">
                   <div class="library-head font-mono">
-                    <span class="lib-title">DRAG &amp; DROP NODES</span>
+                    <span class="lib-title">NODE PALETTE</span>
+                    <span class="text-xs text-muted" id="palette-count-badge">9 nodes</span>
                   </div>
+
+                  <div class="node-search-box">
+                    <input type="text" id="studio-node-search" class="node-search-input font-mono" placeholder="Filter nodes... (⌘K)" />
+                  </div>
+
                   <div class="node-library-list" id="studio-palette-list">
+                    <div class="palette-category-label">Triggers &amp; Intake</div>
                     <div class="lib-item" draggable="true" data-node-type="webhook">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                      <span class="lib-icon-pill" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">⚡</span>
                       <span>Webhook Intake</span>
                     </div>
+                    <div class="lib-item" draggable="true" data-node-type="trigger">
+                      <span class="lib-icon-pill" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">▶️</span>
+                      <span>Manual Trigger</span>
+                    </div>
+
+                    <div class="palette-category-label">AI &amp; Reasoning</div>
                     <div class="lib-item" draggable="true" data-node-type="ai_agent">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
-                      <span>AI Agent (LLM)</span>
+                      <span class="lib-icon-pill" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">🧠</span>
+                      <span>Claude 3.5 Sonnet</span>
                     </div>
+
+                    <div class="palette-category-label">Logic &amp; Scripts</div>
                     <div class="lib-item" draggable="true" data-node-type="condition">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                      <span>Condition Branch</span>
+                      <span class="lib-icon-pill" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">🔀</span>
+                      <span>Branch Condition</span>
                     </div>
+                    <div class="lib-item" draggable="true" data-node-type="code">
+                      <span class="lib-icon-pill" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;">⚙️</span>
+                      <span>Custom JS Code</span>
+                    </div>
+
+                    <div class="palette-category-label">Data &amp; Actions</div>
                     <div class="lib-item" draggable="true" data-node-type="http_request">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+                      <span class="lib-icon-pill" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">🌐</span>
                       <span>HTTP Request</span>
                     </div>
                     <div class="lib-item" draggable="true" data-node-type="database">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/></svg>
+                      <span class="lib-icon-pill" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;">🗄️</span>
                       <span>PostgreSQL DB</span>
                     </div>
                     <div class="lib-item" draggable="true" data-node-type="slack">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/></svg>
-                      <span>Slack Dispatch</span>
+                      <span class="lib-icon-pill" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">💬</span>
+                      <span>Slack Alert</span>
                     </div>
                     <div class="lib-item" draggable="true" data-node-type="email">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                      <span>Email Alert</span>
-                    </div>
-                    <div class="lib-item" draggable="true" data-node-type="code">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                      <span>Custom JS Code</span>
-                    </div>
-                    <div class="lib-item" draggable="true" data-node-type="trigger">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                      <span>Manual Trigger</span>
+                      <span class="lib-icon-pill" style="background: rgba(244, 63, 94, 0.15); color: #f43f5e;">✉️</span>
+                      <span>Email Dispatch</span>
                     </div>
                   </div>
                 </div>
@@ -989,13 +1002,24 @@ export default async function(items) {
                     <div class="canvas-nodes-layer" id="studio-canvas-nodes">
                       <!-- Rendered dynamically by app.js -->
                     </div>
+
+                    <!-- Canvas Floating Dock Controls -->
+                    <div class="canvas-dock-controls font-mono">
+                      <button class="dock-btn" id="btn-dock-zoom-in" title="Zoom In">+</button>
+                      <button class="dock-btn" id="btn-dock-zoom-out" title="Zoom Out">−</button>
+                      <button class="dock-btn" id="btn-dock-fit" title="Reset View">⤢</button>
+                      <div class="dock-divider"></div>
+                      <span class="dock-meta-text" id="dock-node-count-label">4 nodes</span>
+                      <div class="dock-divider"></div>
+                      <span class="dock-meta-text text-success">● Engine Live</span>
+                    </div>
                   </div>
 
                   <!-- Studio Execution Terminal -->
                   <div class="ide-terminal">
                     <div class="terminal-bar font-mono">
-                      <span class="term-title">EXECUTION LOGS</span>
-                      <span class="term-status" id="studio-term-status">Idle</span>
+                      <span class="term-title">REAL-TIME EXECUTION LOGS</span>
+                      <span class="term-status" id="studio-term-status">Ready</span>
                     </div>
                     <div class="terminal-body font-mono" id="studio-terminal-logs">
                       <div class="term-line text-muted">[2026-08-18 14:40:02] Engine initialized. Drag nodes or click 'Run Flow' to execute.</div>
@@ -1003,11 +1027,18 @@ export default async function(items) {
                   </div>
                 </div>
 
-                <!-- Right Inspector Panel -->
+                <!-- Right Inspector Panel (Tabbed) -->
                 <div class="ide-inspector">
                   <div class="inspector-head font-mono">
                     <span class="lib-title">NODE INSPECTOR</span>
                   </div>
+
+                  <div class="inspector-tabs-row font-mono">
+                    <button class="insp-tab-btn active" data-insp-tab="config">Parameters</button>
+                    <button class="insp-tab-btn" data-insp-tab="json">JSON</button>
+                    <button class="insp-tab-btn" data-insp-tab="test">Quick Test</button>
+                  </div>
+
                   <div class="inspector-body" id="studio-inspector-content">
                     <p class="text-muted text-sm" style="text-align:center; padding: 20px 0;">Select a node on canvas to configure parameters.</p>
                   </div>
@@ -1296,6 +1327,9 @@ export default async function(items) {
       </div>
     </div>
   </div>
+
+  <!-- Toast Notifications Layer -->
+  <div class="toast-container" id="toast-container"></div>
 
   <script src="app.js"></script>
 </body>
