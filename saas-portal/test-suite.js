@@ -61,16 +61,18 @@ async function runTests() {
   }
 
   // ----------------------------------------------------
-  // AUTH SETUP: Authenticate User A for Workflow Tests
+  // AUTH SETUP: Create Fresh Scale Tier User For Tests
   // ----------------------------------------------------
   let tokenA = null;
   try {
-    const loginA = await req('/api/auth/login', 'POST', {
-      email: 'alex@company.com',
-      password: 'password123'
+    const signupA = await req('/api/auth/signup', 'POST', {
+      name: 'Test Engineer',
+      email: `test_eng_${Date.now()}@sun9.io`,
+      password: 'password123',
+      planTier: 'scale'
     });
-    tokenA = loginA.data.token;
-    assert(tokenA, 'Failed to obtain token for User A');
+    tokenA = signupA.data.token;
+    assert(tokenA, 'Failed to obtain token for Test Engineer');
   } catch (e) {
     console.error('Setup Auth Error:', e.message);
   }

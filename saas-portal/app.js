@@ -154,21 +154,39 @@ document.addEventListener('DOMContentLoaded', () => {
   const tableFullExecutions = document.getElementById('table-full-executions');
   const tableRecentExecs = document.getElementById('table-recent-execs');
 
-  // =========================================================================
-  // VIEW NAVIGATION
-  // =========================================================================
+  const navWrapper = document.querySelector('.nav-wrapper');
+  const btnBackToLanding = document.getElementById('btn-back-to-landing');
+  const sidebarBrand = document.querySelector('.sidebar-brand');
+
   function setView(view) {
     currentView = view;
     viewLanding.style.display = view === 'landing' ? 'block' : 'none';
     viewDashboard.style.display = view === 'dashboard' ? 'block' : 'none';
 
+    // Hide public landing navbar inside the dashboard
+    if (navWrapper) {
+      navWrapper.style.display = view === 'landing' ? 'flex' : 'none';
+    }
+
     if (view === 'landing') {
       navAuthLabel.textContent = currentUser ? 'Dashboard' : 'Log in';
     } else if (view === 'dashboard') {
-      navAuthLabel.textContent = 'Landing Page';
       window.scrollTo({ top: 0, behavior: 'smooth' });
       renderStudioCanvas();
     }
+  }
+
+  if (btnBackToLanding) {
+    btnBackToLanding.addEventListener('click', () => {
+      setView('landing');
+    });
+  }
+
+  if (sidebarBrand) {
+    sidebarBrand.style.cursor = 'pointer';
+    sidebarBrand.addEventListener('click', () => {
+      setView('landing');
+    });
   }
 
   btnOpenAuthLogin.addEventListener('click', () => {

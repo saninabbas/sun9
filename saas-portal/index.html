@@ -757,9 +757,14 @@ export default async function(items) {
                 <div class="user-plan font-mono" id="sidebar-plan-label">Pro Plan</div>
               </div>
             </div>
-            <button class="btn btn-ghost btn-xs btn-full" id="btn-logout" style="margin-top: 8px; color: var(--text-tertiary);">
-              <span>Log out</span>
-            </button>
+            <div class="sidebar-actions-stack" style="margin-top: 8px; display: flex; flex-direction: column; gap: 4px;">
+              <button class="btn btn-ghost btn-xs btn-full text-muted" id="btn-back-to-landing">
+                <span>← Back to Website</span>
+              </button>
+              <button class="btn btn-ghost btn-xs btn-full" id="btn-logout" style="color: var(--accent-rose);">
+                <span>Log out</span>
+              </button>
+            </div>
           </div>
         </aside>
 
