@@ -930,6 +930,15 @@ export default async function(items) {
             <div style="margin-bottom: 24px;">
               <h3 class="font-mono text-xs text-muted" style="letter-spacing:0.05em; margin-bottom: 12px;">START FROM POPULAR TEMPLATES</h3>
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;">
+                <div class="content-box wf-template-card" data-template="youtube_ai" style="cursor:pointer; transition: all 0.2s ease; border-color: rgba(239, 68, 68, 0.4);">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <span style="font-size: 1.25rem;">🎥</span>
+                    <span class="font-medium" style="font-size: 0.9rem; color: #ef4444;">YouTube AI Auto-Creator</span>
+                  </div>
+                  <p class="text-muted text-xs">New Video Upload → Claude 3.5 Transcript Summarizer → 5 Viral Tweets &amp; Script → Telegram &amp; DB.</p>
+                  <div class="font-mono text-xs text-accent" style="margin-top: 10px; color: #ef4444;">Launch YouTube Flow →</div>
+                </div>
+
                 <div class="content-box wf-template-card" data-template="lead_enrichment" style="cursor:pointer; transition: all 0.2s ease;">
                   <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                     <span style="font-size: 1.25rem;">⚡</span>
@@ -1038,6 +1047,10 @@ export default async function(items) {
 
                   <div class="node-library-list" id="studio-palette-list">
                     <div class="palette-category-label">Triggers &amp; Intake</div>
+                    <div class="lib-item" draggable="true" data-node-type="youtube">
+                      <span class="lib-icon-pill" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;">🎥</span>
+                      <span>YouTube Intake</span>
+                    </div>
                     <div class="lib-item" draggable="true" data-node-type="webhook">
                       <span class="lib-icon-pill" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">⚡</span>
                       <span>Webhook Intake</span>
@@ -1064,6 +1077,10 @@ export default async function(items) {
                     </div>
 
                     <div class="palette-category-label">Data &amp; Actions</div>
+                    <div class="lib-item" draggable="true" data-node-type="telegram">
+                      <span class="lib-icon-pill" style="background: rgba(14, 165, 233, 0.15); color: #0ea5e9;">✈️</span>
+                      <span>Telegram Dispatch</span>
+                    </div>
                     <div class="lib-item" draggable="true" data-node-type="http_request">
                       <span class="lib-icon-pill" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">🌐</span>
                       <span>HTTP Request</span>

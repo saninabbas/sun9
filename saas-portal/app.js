@@ -467,6 +467,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let userWorkflows = [
     {
+      id: 'wf_yt_01',
+      name: 'YouTube AI Auto-Creator & Repurposer',
+      trigger: 'YouTube Feed / Upload',
+      nodesCount: 4,
+      status: 'Active',
+      lastExecuted: 'Just now',
+      definition: {
+        nodes: [
+          { id: 'node_yt', type: 'youtube', name: 'YouTube Channel Intake', x: 40, y: 120, parameters: { channelId: 'UC_x5XG1OV2P6uZZ5FSM9Ttw', event: 'new_video' }, status: 'READY' },
+          { id: 'node_ai', type: 'ai_agent', name: 'Claude 3.5 Scriptwriter', x: 260, y: 80, parameters: { model: 'claude-3-5-sonnet', prompt: 'Summarize video transcript into 5 viral tweets & viral Shorts script.' }, status: 'READY' },
+          { id: 'node_tg', type: 'telegram', name: 'Telegram Viral Channel', x: 480, y: 120, parameters: { chatId: '@viral_shorts_feed', parseMode: 'HTML' }, status: 'READY' },
+          { id: 'node_db', type: 'database', name: 'PostgreSQL Video Vault', x: 700, y: 120, parameters: { query: 'INSERT INTO youtube_vault (video_id, script) VALUES ($1, $2);' }, status: 'READY' }
+        ],
+        connections: [
+          { id: 'conn_1', source: 'node_yt', target: 'node_ai' },
+          { id: 'conn_2', source: 'node_ai', target: 'node_tg' },
+          { id: 'conn_3', source: 'node_tg', target: 'node_db' }
+        ]
+      }
+    },
+    {
       id: 'wf_101',
       name: 'AI Lead Intelligence Pipeline',
       trigger: 'Webhook / POST',
@@ -586,7 +607,23 @@ document.addEventListener('DOMContentLoaded', () => {
       const tmpl = card.getAttribute('data-template');
       const newId = 'wf_' + Math.random().toString(36).substring(2, 8);
 
-      if (tmpl === 'lead_enrichment') {
+      if (tmpl === 'youtube_ai') {
+        activeWorkflow = {
+          id: newId,
+          name: 'YouTube AI Auto-Creator & Repurposer',
+          nodes: [
+            { id: 'node_yt', type: 'youtube', name: 'YouTube Channel Intake', x: 40, y: 120, parameters: { channelId: 'UC_x5XG1OV2P6uZZ5FSM9Ttw', event: 'new_video' }, status: 'READY' },
+            { id: 'node_ai', type: 'ai_agent', name: 'Claude 3.5 Scriptwriter', x: 260, y: 80, parameters: { model: 'claude-3-5-sonnet', prompt: 'Summarize video transcript into 5 viral tweets & viral Shorts script.' }, status: 'READY' },
+            { id: 'node_tg', type: 'telegram', name: 'Telegram Viral Channel', x: 480, y: 120, parameters: { chatId: '@viral_shorts_feed', parseMode: 'HTML' }, status: 'READY' },
+            { id: 'node_db', type: 'database', name: 'PostgreSQL Video Vault', x: 700, y: 120, parameters: { query: 'INSERT INTO youtube_vault (video_id, script) VALUES ($1, $2);' }, status: 'READY' }
+          ],
+          connections: [
+            { id: 'conn_1', source: 'node_yt', target: 'node_ai' },
+            { id: 'conn_2', source: 'node_ai', target: 'node_tg' },
+            { id: 'conn_3', source: 'node_tg', target: 'node_db' }
+          ]
+        };
+      } else if (tmpl === 'lead_enrichment') {
         activeWorkflow = {
           id: newId,
           name: 'AI Lead Intelligence Pipeline',
@@ -728,9 +765,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // INTERACTIVE WORKFLOW STUDIO: DRAG & DROP CANVAS ENGINE (UI/UX v2.0)
   // =========================================================================
   const NODE_TYPE_META = {
+    youtube: { title: 'YouTube Intake', tag: 'TRIGGER', icon: '🎥', color: '#ef4444' },
     webhook: { title: 'Webhook Intake', tag: 'TRIGGER', icon: '⚡', color: '#10b981' },
     ai_agent: { title: 'Claude 3.5 Sonnet', tag: 'AI AGENT', icon: '🧠', color: '#a855f7' },
     condition: { title: 'Condition Branch', tag: 'CONDITION', icon: '🔀', color: '#f59e0b' },
+    telegram: { title: 'Telegram Channel', tag: 'ACTION', icon: '✈️', color: '#0ea5e9' },
     http_request: { title: 'HTTP Request', tag: 'NETWORK', icon: '🌐', color: '#3b82f6' },
     database: { title: 'PostgreSQL DB', tag: 'DATABASE', icon: '🗄️', color: '#06b6d4' },
     slack: { title: 'Slack Alert', tag: 'ACTION', icon: '💬', color: '#ec4899' },
@@ -1114,6 +1153,35 @@ document.addEventListener('DOMContentLoaded', () => {
           <input type="text" class="input-ctrl font-mono" id="insp-param-to" value="${params.toEmail || 'leads@sun9.io'}" />
         </div>
       `;
+    } else if (node.type === 'youtube') {
+      specificFields = `
+        <div class="form-group">
+          <label class="form-label">YouTube Channel ID / Handle</label>
+          <input type="text" class="input-ctrl font-mono" id="insp-param-yt-channel" value="${params.channelId || 'UC_x5XG1OV2P6uZZ5FSM9Ttw'}" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Trigger Event</label>
+          <select class="input-ctrl" id="insp-param-yt-event">
+            <option value="new_video" ${params.event === 'new_video' ? 'selected' : ''}>New Video Uploaded</option>
+            <option value="new_short" ${params.event === 'new_short' ? 'selected' : ''}>New YouTube Short</option>
+            <option value="transcript" ${params.event === 'transcript' ? 'selected' : ''}>Auto-Extract Full Transcript</option>
+          </select>
+        </div>
+      `;
+    } else if (node.type === 'telegram') {
+      specificFields = `
+        <div class="form-group">
+          <label class="form-label">Telegram Channel / Group ID</label>
+          <input type="text" class="input-ctrl font-mono" id="insp-param-tg-chat" value="${params.chatId || '@viral_shorts_feed'}" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message Format</label>
+          <select class="input-ctrl" id="insp-param-tg-mode">
+            <option value="HTML" ${params.parseMode === 'HTML' ? 'selected' : ''}>HTML Rich Text</option>
+            <option value="Markdown" ${params.parseMode === 'Markdown' ? 'selected' : ''}>Markdown</option>
+          </select>
+        </div>
+      `;
     } else if (node.type === 'code') {
       specificFields = `
         <div class="form-group">
@@ -1148,6 +1216,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (document.getElementById('insp-param-channel')) node.parameters.channel = document.getElementById('insp-param-channel').value;
       if (document.getElementById('insp-param-to')) node.parameters.toEmail = document.getElementById('insp-param-to').value;
       if (document.getElementById('insp-param-code')) node.parameters.code = document.getElementById('insp-param-code').value;
+      if (document.getElementById('insp-param-yt-channel')) node.parameters.channelId = document.getElementById('insp-param-yt-channel').value;
+      if (document.getElementById('insp-param-yt-event')) node.parameters.event = document.getElementById('insp-param-yt-event').value;
+      if (document.getElementById('insp-param-tg-chat')) node.parameters.chatId = document.getElementById('insp-param-tg-chat').value;
+      if (document.getElementById('insp-param-tg-mode')) node.parameters.parseMode = document.getElementById('insp-param-tg-mode').value;
 
       renderStudioCanvas();
       showToast('Node configuration updated', 'success');

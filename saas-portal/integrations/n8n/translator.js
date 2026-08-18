@@ -12,7 +12,9 @@ const SUPPORTED_NODE_TYPES = [
   'code',
   'database',
   'slack',
-  'email'
+  'email',
+  'youtube',
+  'telegram'
 ];
 
 /**
@@ -165,6 +167,35 @@ function translateNode(sun9Node, index) {
           toEmail: params.toEmail || 'user@example.com',
           subject: params.subject || 'sun9 Automated Notification',
           message: params.message || 'Automated message body.'
+        }
+      };
+
+    case 'youtube':
+      return {
+        id: sun9Node.id || `node_${index + 1}`,
+        name: name,
+        type: 'n8n-nodes-base.httpRequest',
+        typeVersion: 4.2,
+        position: position,
+        parameters: {
+          url: `https://www.youtube.com/feeds/videos.xml?channel_id=${params.channelId || 'UC_x5XG1OV2P6uZZ5FSM9Ttw'}`,
+          method: 'GET',
+          options: { response: { response: { fullResponse: false } } }
+        }
+      };
+
+    case 'telegram':
+      return {
+        id: sun9Node.id || `node_${index + 1}`,
+        name: name,
+        type: 'n8n-nodes-base.telegram',
+        typeVersion: 1.2,
+        position: position,
+        parameters: {
+          resource: 'message',
+          operation: 'sendMessage',
+          chatId: params.chatId || '@my_channel',
+          text: params.text || 'New YouTube automation update from sun9'
         }
       };
 
