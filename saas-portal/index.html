@@ -907,12 +907,21 @@ export default async function(items) {
               <div class="ide-header">
                 <div class="ide-flow-name font-mono">
                   <span class="dot-live"></span>
-                  <span>customer-enrichment-v2.flow</span>
-                  <span class="flow-version-tag">v1.4.0</span>
+                  <input type="text" id="studio-workflow-name-input" class="input-ctrl font-mono" style="background:transparent; border:none; color:var(--text-primary); font-size:0.8rem; font-weight:600; width:220px; padding:2px 4px;" value="Lead Enrichment Agent" />
+                  <span class="flow-version-tag" id="studio-wf-id-badge">wf_101</span>
                 </div>
 
                 <div class="ide-toolbar">
-                  <button class="btn btn-secondary btn-xs" id="btn-studio-save">Save</button>
+                  <button class="btn btn-ghost btn-xs" id="btn-studio-new" title="Create New Flow">+ New Flow</button>
+                  <button class="btn btn-ghost btn-xs" id="btn-studio-clear" title="Clear Canvas">Clear</button>
+                  <button class="btn btn-secondary btn-xs" id="btn-studio-save">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                      <polyline points="17 21 17 13 7 13 7 21"/>
+                      <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    <span>Save Flow</span>
+                  </button>
                   <button class="btn btn-primary btn-xs" id="btn-studio-run">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
                       <polygon points="5 3 19 12 5 21 5 3"/>
@@ -923,89 +932,84 @@ export default async function(items) {
               </div>
 
               <div class="ide-body">
+                <!-- Left Palette: Draggable Node Library -->
                 <div class="ide-library">
                   <div class="library-head font-mono">
-                    <span class="lib-title">NODE LIBRARY</span>
+                    <span class="lib-title">DRAG &amp; DROP NODES</span>
                   </div>
-                  <div class="node-library-list">
-                    <div class="lib-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>Webhook Intake</span></div>
-                    <div class="lib-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg><span>AI Agent (LLM)</span></div>
-                    <div class="lib-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Branch Condition</span></div>
-                    <div class="lib-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg><span>HTTP Request</span></div>
-                    <div class="lib-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/></svg><span>PostgreSQL</span></div>
+                  <div class="node-library-list" id="studio-palette-list">
+                    <div class="lib-item" draggable="true" data-node-type="webhook">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                      <span>Webhook Intake</span>
+                    </div>
+                    <div class="lib-item" draggable="true" data-node-type="ai_agent">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+                      <span>AI Agent (LLM)</span>
+                    </div>
+                    <div class="lib-item" draggable="true" data-node-type="condition">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                      <span>Condition Branch</span>
+                    </div>
+                    <div class="lib-item" draggable="true" data-node-type="http_request">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+                      <span>HTTP Request</span>
+                    </div>
+                    <div class="lib-item" draggable="true" data-node-type="database">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/></svg>
+                      <span>PostgreSQL DB</span>
+                    </div>
+                    <div class="lib-item" draggable="true" data-node-type="slack">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/></svg>
+                      <span>Slack Dispatch</span>
+                    </div>
+                    <div class="lib-item" draggable="true" data-node-type="email">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                      <span>Email Alert</span>
+                    </div>
+                    <div class="lib-item" draggable="true" data-node-type="code">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                      <span>Custom JS Code</span>
+                    </div>
+                    <div class="lib-item" draggable="true" data-node-type="trigger">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                      <span>Manual Trigger</span>
+                    </div>
                   </div>
                 </div>
 
+                <!-- Center Interactive Canvas -->
                 <div class="ide-canvas-area">
                   <div class="canvas-grid-bg" id="studio-interactive-canvas">
-                    <div class="studio-flow-container">
-                      <div class="studio-node active" id="snode-1">
-                        <div class="snode-type font-mono">TRIGGER</div>
-                        <div class="snode-name">Webhook Intake</div>
-                        <div class="snode-status font-mono">Ready</div>
-                      </div>
-                      <div class="snode-line" id="sline-1"></div>
-                      <div class="studio-node" id="snode-2">
-                        <div class="snode-type font-mono">AI AGENT</div>
-                        <div class="snode-name">Score Lead Intent</div>
-                        <div class="snode-status font-mono">Standby</div>
-                      </div>
-                      <div class="snode-line" id="sline-2"></div>
-                      <div class="studio-node" id="snode-3">
-                        <div class="snode-type font-mono">CONDITION</div>
-                        <div class="snode-name">Evaluate Score &gt; 80</div>
-                        <div class="snode-status font-mono">Standby</div>
-                      </div>
-                      <div class="snode-line" id="sline-3"></div>
-                      <div class="studio-node" id="snode-4">
-                        <div class="snode-type font-mono">ACTION</div>
-                        <div class="snode-name">Postgres Upsert</div>
-                        <div class="snode-status font-mono">Standby</div>
-                      </div>
+                    <!-- SVG Connection Cables -->
+                    <svg class="canvas-svg-layer" id="studio-svg-connections">
+                      <path id="temp-drawing-wire" class="svg-wire-path drawing" d="" style="display:none;" />
+                    </svg>
+
+                    <!-- Draggable Node Cards Layer -->
+                    <div class="canvas-nodes-layer" id="studio-canvas-nodes">
+                      <!-- Rendered dynamically by app.js -->
                     </div>
                   </div>
 
+                  <!-- Studio Execution Terminal -->
                   <div class="ide-terminal">
                     <div class="terminal-bar font-mono">
                       <span class="term-title">EXECUTION LOGS</span>
                       <span class="term-status" id="studio-term-status">Idle</span>
                     </div>
                     <div class="terminal-body font-mono" id="studio-terminal-logs">
-                      <div class="term-line text-muted">[2026-08-18 14:40:02] Engine initialized. Listening for workflow trigger signals...</div>
+                      <div class="term-line text-muted">[2026-08-18 14:40:02] Engine initialized. Drag nodes or click 'Run Flow' to execute.</div>
                     </div>
                   </div>
                 </div>
 
+                <!-- Right Inspector Panel -->
                 <div class="ide-inspector">
                   <div class="inspector-head font-mono">
                     <span class="lib-title">NODE INSPECTOR</span>
                   </div>
-                  <div class="inspector-body">
-                    <div class="form-group">
-                      <label class="form-label">Selected Node</label>
-                      <input type="text" class="input-ctrl font-mono" readonly value="AI Agent (Claude 3.5 Sonnet)" />
-                    </div>
-
-                    <div class="form-group">
-                      <label class="form-label">Model Provider</label>
-                      <select class="input-ctrl">
-                        <option>Anthropic • claude-3-5-sonnet</option>
-                        <option>OpenAI • gpt-4o-mini</option>
-                        <option>Google • gemini-1.5-pro</option>
-                      </select>
-                    </div>
-
-                    <div class="form-group">
-                      <label class="form-label">Temperature</label>
-                      <input type="text" class="input-ctrl font-mono" value="0.2" />
-                    </div>
-
-                    <div class="form-group">
-                      <label class="form-label">Prompt Instructions</label>
-                      <textarea class="input-ctrl font-mono" rows="3">Analyze the incoming lead payload. Score urgency between 1-100 and extract verified company domain.</textarea>
-                    </div>
-
-                    <button class="btn btn-secondary btn-full btn-xs" id="btn-save-node-config">Apply Configuration</button>
+                  <div class="inspector-body" id="studio-inspector-content">
+                    <p class="text-muted text-sm" style="text-align:center; padding: 20px 0;">Select a node on canvas to configure parameters.</p>
                   </div>
                 </div>
               </div>
